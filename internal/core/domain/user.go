@@ -1,12 +1,47 @@
 package domain
 
-import "time"
+import (
+	"errors"
+	"log"
+)
+
+var (
+	ErrEmptyName = errors.New("Empty name supplied")
+	ErrEmptyEmail = errors.New("Empty email supplied")
+)
+
+type FirstName string
+type LastName string
+type Email string
+type IsAuthor bool
 
 type User struct {
-	Id        int32     `json:"id"`
-	FirstName string    `json:"first_name"`
-	LastName  string    `json:"last_name"`
-	Email     string    `json:"email"`
-	IsAuthor  bool      `json:"is_author"`
-	CreatedAt time.Time `json:"created_at"`
+	FirstName FirstName
+	LastName  LastName
+	Email     Email
+	IsAuthor  IsAuthor
+}
+
+func NewUser(firstName string, lastName string, email string, isAuthor bool) (User, error) {
+	if firstName == "" {
+		log.Print(ErrEmptyName)
+		return User{}, ErrEmptyName
+	}
+	
+	if lastName == "" {
+		log.Print(ErrEmptyName)
+		return User{}, ErrEmptyName
+	}
+
+	if email == "" {
+		log.Print(ErrEmptyEmail)
+		return User{}, ErrEmptyEmail
+	}
+
+	return User{
+		FirstName(firstName),
+		LastName(lastName),
+		Email(email),
+		IsAuthor(isAuthor),
+	}, nil
 }

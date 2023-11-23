@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	repo, _ := repository.NewUserPostgresRepository()
+	repo := repository.NewUserPostgresRepository()
 
 	userService := services.NewUserService(repo)
 	userHandler := handler.NewUserHttpHandler(userService)

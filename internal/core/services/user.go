@@ -3,6 +3,7 @@ package services
 import (
 	"bythecover/backend/internal/core/domain"
 	"bythecover/backend/internal/core/ports"
+	"context"
 )
 
 type userService struct {
@@ -15,11 +16,19 @@ func NewUserService(repo ports.UserRepo) userService {
 	}
 }
 
-func (service userService) Create(user domain.User) {
-	service.repo.Save(user);
+func (service userService) Create(input ports.UserReq) error {
+	user, err := domain.NewUser(input.FirstName, input.LastName, input.Email, input.IsAuthor)
+
+	if err != nil {
+		return err
+	}
+
+	err = service.repo.Save(user)
+
+	return err
 }
 
-func (service userService) GetAll() ([]domain.User, error) {
+func (service userService) GetAll() ([]ports.UserResp, error) {
 	users, err := service.repo.GetAll()
 
 	if err != nil {
@@ -27,4 +36,8 @@ func (service userService) GetAll() ([]domain.User, error) {
 	}
 
 	return users, nil
+}
+
+func (service userService) GetUser(id int, ctx context.Context) (ports.UserResp, error) {
+	return service.repo.GetUser(id, ctx)
 }
