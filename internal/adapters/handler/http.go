@@ -20,7 +20,7 @@ func NewUserHttpHandler(service ports.UserService) userHttpHandler {
 
 func (adapter userHttpHandler) RegisterRoutes(route *gin.Engine) {
 	route.POST("/createUser", func (c *gin.Context) {
-		var person ports.UserReq
+		var person ports.UserResp
 		if err := c.Bind(&person); err != nil {
 			log.Print(err)
 			return

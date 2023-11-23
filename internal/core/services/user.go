@@ -16,7 +16,7 @@ func NewUserService(repo ports.UserRepo) userService {
 	}
 }
 
-func (service userService) Create(input ports.UserReq) error {
+func (service userService) Create(input ports.UserResp) error {
 	user, err := domain.NewUser(input.FirstName, input.LastName, input.Email, input.IsAuthor)
 
 	if err != nil {
