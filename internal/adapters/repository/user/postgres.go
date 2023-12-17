@@ -1,4 +1,4 @@
-package repository
+package user_repository
 
 import (
 	"bythecover/backend/internal/core/domain"
@@ -14,14 +14,7 @@ type userPostgresRepository struct {
 	db *sql.DB
 }
 
-func NewUserPostgresRepository() userPostgresRepository {
-	connStr := "user=postgres_admin dbname=postgres password=password sslmode=disable"
-	db, err := sql.Open("postgres", connStr)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
+func NewUserPostgresRepository(db *sql.DB) userPostgresRepository {
 	return userPostgresRepository{
 		db,
 	}

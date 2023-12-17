@@ -1,4 +1,4 @@
-package handler
+package user_handler
 
 import (
 	"bythecover/backend/internal/core/ports"
@@ -47,15 +47,13 @@ func (adapter userHttpHandler) RegisterRoutes(route *gin.Engine) {
 		if err != nil {
 			if err == ports.ErrUserNotFound {
 				c.AbortWithStatus(404)
-				return;
 			} else {
 				c.AbortWithStatus(500)
-				return;
 			}
+		} else {
+			c.JSON(200, user)
 		}
 
-		c.JSON(200, user)
-		return;
 	})
 
 	route.GET("/users/")
