@@ -19,7 +19,7 @@ func NewUserHttpHandler(service ports.UserService) userHttpHandler {
 }
 
 func (adapter userHttpHandler) RegisterRoutes(route *gin.Engine) {
-	route.POST("/createUser", func (c *gin.Context) {
+	route.POST("/api/createUser", func(c *gin.Context) {
 		var person ports.UserResp
 		if err := c.Bind(&person); err != nil {
 			log.Print(err)
@@ -34,7 +34,7 @@ func (adapter userHttpHandler) RegisterRoutes(route *gin.Engine) {
 
 	})
 
-	route.GET("/users/:id", func (c *gin.Context) {
+	route.GET("/api/users/:id", func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
 
 		if err != nil {
@@ -55,6 +55,4 @@ func (adapter userHttpHandler) RegisterRoutes(route *gin.Engine) {
 		}
 
 	})
-
-	route.GET("/users/")
 }

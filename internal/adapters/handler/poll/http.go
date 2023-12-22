@@ -19,7 +19,7 @@ func NewPollHttpHandler(svc ports.PollService) pollHttpHandler {
 }
 
 func (handler pollHttpHandler) RegisterRoutes(route *gin.Engine) {
-	route.GET("/polls/:id", func (c *gin.Context) {
+	route.GET("/api/polls/:id", func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
 
 		if err != nil {

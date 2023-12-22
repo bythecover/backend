@@ -1,0 +1,14 @@
+services:
+  static-server:
+    build: ./web
+    volumes:
+      - ./web/public:/usr/share/nginx/html
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - htmx-server
+  htmx-server:
+    build: .
+    volumes:
+      - .:/usr/src/app

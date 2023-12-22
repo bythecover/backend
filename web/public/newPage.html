@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="output.css">
+    <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div hx-boost="true">
+        <a class="text-3xl" href="/" hx-select="#app" hx-target="#app">Home</a>
+        <a href="/newPage" hx-select="#app" hx-target="#app">New Page</a>
+        <h1 class="text-3xl">Hello there</h1>
+    </div>
+    <div id="app">
+        <h1>New Page :)</h1>
+    </div>
+</body>
+</html>
