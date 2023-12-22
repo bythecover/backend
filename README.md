@@ -1,7 +1,3 @@
 # Running the Dev environment
 
-```
-docker compose up
-```
-
-open "localhost:80" on the browser
+First run `docker compose up` then open "localhost:80" on the browser
