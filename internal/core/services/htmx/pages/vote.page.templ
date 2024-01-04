@@ -1,0 +1,12 @@
+package pages
+
+import "bythecover/backend/internal/core/domain"
+
+templ VotePage(poll domain.Poll) {
+    @NewPage() {
+        <div class="flex flex-row">
+            <button class="h-screen w-1/2 bg-blue-600 transition-all duration-200 ease-in-out hover:w-11/12 hover:bg-blue-900 active:bg-blue-950">{ poll.Options[0].Name }</button>
+            <button class="h-screen w-1/2 bg-blue-600 transition-all duration-200 ease-in-out hover:w-11/12 hover:bg-blue-900 active:bg-blue-950">{ poll.Options[1].Name }</button>
+        </div>
+    }
+}

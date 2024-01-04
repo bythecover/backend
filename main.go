@@ -8,6 +8,7 @@ import (
 	"bythecover/backend/internal/adapters/repository/postgres"
 	user_repository "bythecover/backend/internal/adapters/repository/user"
 	"bythecover/backend/internal/core/services"
+	"bythecover/backend/internal/core/services/htmx"
 
 	"github.com/gin-gonic/gin"
 )
@@ -32,7 +33,8 @@ func main() {
 	pollService := services.NewPollService(pollRepo)
 	pollHandler := poll_handler.NewPollHttpHandler(pollService)
 
-	htmxHandler := htmx_handler.NewHtmxHandler(pollService)
+	htmxService := htmx.NewHtmxService()
+	htmxHandler := htmx_handler.NewHtmxHttpHandler(htmxService, pollService)
 
 	route := gin.Default()
 	route.Use(SetupCors())
