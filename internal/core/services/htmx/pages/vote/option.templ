@@ -1,0 +1,9 @@
+package vote
+
+import "bythecover/backend/internal/core/domain"
+
+templ Option(option domain.Option) {
+    <button class="group h-screen w-1/2 bg-blue-600 transition-all duration-200 ease-in-out hover:w-11/12 hover:bg-blue-900 active:bg-blue-950">
+        <img class="transition-all m-auto w-full group-hover:w-auto" src={"https://res.cloudinary.com/degz1nuus/image/upload/v1704576289/By%20The%20Cover/polls/" + option.Image} />
+    </button>
+}
