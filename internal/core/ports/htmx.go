@@ -9,4 +9,5 @@ import (
 type HtmxService interface {
 	// Pages
 	VotePage(domain.Poll, *gin.Context) error
+	SubmitVote(*gin.Context) error
 }

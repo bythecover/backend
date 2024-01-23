@@ -28,4 +28,9 @@ func (handler htmxHttpHandler) RegisterRoutes(route *gin.Engine) {
 
 		handler.htmxSvc.VotePage(poll, c)
 	})
+
+	route.POST("/vote/submit", func(c *gin.Context) {
+		// accept submission and return success/fail dialog
+		handler.htmxSvc.SubmitVote(c)
+	})
 }
