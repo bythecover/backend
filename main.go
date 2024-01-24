@@ -7,6 +7,7 @@ import (
 	poll_repository "bythecover/backend/internal/adapters/repository/poll"
 	"bythecover/backend/internal/adapters/repository/postgres"
 	user_repository "bythecover/backend/internal/adapters/repository/user"
+	vote_repository "bythecover/backend/internal/adapters/repository/vote"
 	"bythecover/backend/internal/core/services"
 	"bythecover/backend/internal/core/services/htmx"
 
@@ -30,7 +31,10 @@ func main() {
 	pollService := services.NewPollService(pollRepo)
 	pollHandler := poll_handler.NewPollHttpHandler(pollService)
 
-	htmxService := htmx.NewHtmxService()
+	voteRepo := vote_repository.NewPollPostgresRepository(dbConnection)
+	voteService := services.NewVoteService(voteRepo)
+
+	htmxService := htmx.NewHtmxService(voteService)
 	htmxHandler := htmx_handler.NewHtmxHttpHandler(htmxService, pollService)
 
 	route := gin.Default()

@@ -2,6 +2,7 @@ package htmx_handler
 
 import (
 	"bythecover/backend/internal/core/ports"
+	"log"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -31,6 +32,8 @@ func (handler htmxHttpHandler) RegisterRoutes(route *gin.Engine) {
 
 	route.POST("/vote/submit", func(c *gin.Context) {
 		// accept submission and return success/fail dialog
+		content := c.PostForm("Option 2")
+		log.Print(content)
 		handler.htmxSvc.SubmitVote(c)
 	})
 }

@@ -2,6 +2,7 @@ package htmx
 
 import (
 	"bythecover/backend/internal/core/domain"
+	"bythecover/backend/internal/core/ports"
 	"bythecover/backend/internal/core/services/htmx/components"
 	"bythecover/backend/internal/core/services/htmx/pages"
 
@@ -9,10 +10,13 @@ import (
 )
 
 type htmxService struct {
+	voteService ports.VoteService
 }
 
-func NewHtmxService() htmxService {
-	return htmxService{}
+func NewHtmxService(voteService ports.VoteService) htmxService {
+	return htmxService{
+		voteService,
+	}
 }
 
 func (service htmxService) VotePage(poll domain.Poll, c *gin.Context) error {
@@ -22,6 +26,13 @@ func (service htmxService) VotePage(poll domain.Poll, c *gin.Context) error {
 }
 
 func (service htmxService) SubmitVote(c *gin.Context) error {
-	components.Dialog().Render(c, c.Writer)
+	err := service.voteService.SubmitVote(c, 1)
+
+	if err != nil {
+		components.Dialog(err).Render(c, c.Writer)
+		return nil
+	}
+
+	components.Dialog(nil).Render(c, c.Writer)
 	return nil
 }
