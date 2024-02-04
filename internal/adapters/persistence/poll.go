@@ -1,4 +1,4 @@
-package poll_repository
+package persistence
 
 import (
 	"bythecover/backend/internal/core/domain"
@@ -43,4 +43,3 @@ func (repo pollPostgresRepository) GetById(ctx context.Context, id int) (domain.
 
 	return poll, nil
 }
-

@@ -1,4 +1,4 @@
-package htmx_handler
+package handler
 
 import (
 	"bythecover/backend/internal/core/ports"

@@ -1,15 +1,9 @@
 package main
 
 import (
-	htmx_handler "bythecover/backend/internal/adapters/handler/htmx"
-	poll_handler "bythecover/backend/internal/adapters/handler/poll"
-	user_handler "bythecover/backend/internal/adapters/handler/user"
-	poll_repository "bythecover/backend/internal/adapters/repository/poll"
-	"bythecover/backend/internal/adapters/repository/postgres"
-	user_repository "bythecover/backend/internal/adapters/repository/user"
-	vote_repository "bythecover/backend/internal/adapters/repository/vote"
+	"bythecover/backend/internal/adapters/handler"
+	"bythecover/backend/internal/adapters/persistence"
 	"bythecover/backend/internal/core/services"
-	"bythecover/backend/internal/core/services/htmx"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,21 +15,21 @@ func SetupCors() gin.HandlerFunc {
 }
 
 func main() {
-	dbConnection := postgres.NewPostgresDatabase()
+	dbConnection := persistence.NewPostgresDatabase()
 
-	userRepo := user_repository.NewUserPostgresRepository(dbConnection)
+	userRepo := persistence.NewUserPostgresRepository(dbConnection)
 	userService := services.NewUserService(userRepo)
-	userHandler := user_handler.NewUserHttpHandler(userService)
+	userHandler := handler.NewUserHttpHandler(userService)
 
-	pollRepo := poll_repository.NewPollPostgresRepository(dbConnection)
+	pollRepo := persistence.NewPollPostgresRepository(dbConnection)
 	pollService := services.NewPollService(pollRepo)
-	pollHandler := poll_handler.NewPollHttpHandler(pollService)
+	pollHandler := handler.NewPollHttpHandler(pollService)
 
-	voteRepo := vote_repository.NewPollPostgresRepository(dbConnection)
+	voteRepo := persistence.NewVotePostgresRepository(dbConnection)
 	voteService := services.NewVoteService(voteRepo)
 
-	htmxService := htmx.NewHtmxService(voteService)
-	htmxHandler := htmx_handler.NewHtmxHttpHandler(htmxService, pollService)
+	htmxService := services.NewHtmxService(voteService)
+	htmxHandler := handler.NewHtmxHttpHandler(htmxService, pollService)
 
 	route := gin.Default()
 	route.Use(SetupCors())

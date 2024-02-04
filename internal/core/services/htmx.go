@@ -1,10 +1,10 @@
-package htmx
+package services
 
 import (
 	"bythecover/backend/internal/core/domain"
 	"bythecover/backend/internal/core/ports"
-	"bythecover/backend/internal/core/services/htmx/components"
-	"bythecover/backend/internal/core/services/htmx/pages"
+	"bythecover/backend/internal/core/services/templates/components"
+	"bythecover/backend/internal/core/services/templates/pages"
 
 	"github.com/gin-gonic/gin"
 )

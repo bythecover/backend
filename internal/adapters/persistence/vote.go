@@ -1,4 +1,4 @@
-package vote_repository
+package persistence
 
 import (
 	"bythecover/backend/internal/core/domain"
@@ -13,7 +13,7 @@ type votePostgresRepository struct {
 	db *sql.DB
 }
 
-func NewPollPostgresRepository(db *sql.DB) votePostgresRepository {
+func NewVotePostgresRepository(db *sql.DB) votePostgresRepository {
 	return votePostgresRepository{
 		db,
 	}
