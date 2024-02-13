@@ -32,7 +32,7 @@ func (handler htmxHttpHandler) RegisterRoutes(route *gin.Engine) {
 
 	route.POST("/vote/submit", func(c *gin.Context) {
 		// accept submission and return success/fail dialog
-		content := c.PostForm("Option 2")
+		content := c.PostForm("selection")
 		log.Print(content)
 		handler.htmxSvc.SubmitVote(c)
 	})
