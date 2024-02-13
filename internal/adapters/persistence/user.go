@@ -1,4 +1,4 @@
-package user_repository
+package persistence
 
 import (
 	"bythecover/backend/internal/core/domain"
@@ -22,7 +22,7 @@ func NewUserPostgresRepository(db *sql.DB) userPostgresRepository {
 
 func (repo userPostgresRepository) Save(u domain.User) error {
 	stmt, err := repo.db.Prepare("INSERT INTO users (first_name, last_name, email, is_author) VALUES($1, $2, $3, $4)")
-	
+
 	if err != nil {
 		log.Print(err)
 		return err
@@ -30,7 +30,7 @@ func (repo userPostgresRepository) Save(u domain.User) error {
 
 	defer stmt.Close()
 	stmt.Exec(u.FirstName, u.LastName, u.Email, u.IsAuthor)
-	
+
 	return nil
 }
 

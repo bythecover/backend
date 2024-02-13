@@ -1,4 +1,4 @@
-package poll_handler
+package handler
 
 import (
 	"bythecover/backend/internal/core/ports"
