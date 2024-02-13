@@ -28,9 +28,7 @@ func (repo votePostgresRepository) SubmitVote(ctx context.Context, submission do
 		return err
 	}
 
-	res, err2 := stmt.ExecContext(ctx, submission.Selection, submission.PollEventId, submission.Source, submission.UserId)
-
-	log.Print(res.LastInsertId())
+	_, err2 := stmt.ExecContext(ctx, submission.Selection, submission.PollEventId, submission.Source, submission.UserId)
 
 	if err2 != nil {
 		return err
