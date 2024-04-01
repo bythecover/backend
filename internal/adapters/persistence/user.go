@@ -3,7 +3,6 @@ package persistence
 import (
 	"bythecover/backend/internal/core/domain"
 	"bythecover/backend/internal/core/ports"
-	"context"
 	"database/sql"
 	"log"
 
@@ -55,9 +54,9 @@ func (repo userPostgresRepository) GetAll() ([]ports.UserResp, error) {
 	return people, nil
 }
 
-func (repo userPostgresRepository) GetUser(id int, ctx context.Context) (ports.UserResp, error) {
+func (repo userPostgresRepository) GetUser(id int) (ports.UserResp, error) {
 	var user ports.UserResp
-	err := repo.db.QueryRowContext(ctx, "SELECT id, first_name, last_name, email, is_author, created_at FROM users WHERE id = $1", id).Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.IsAuthor, &user.CreatedAt)
+	err := repo.db.QueryRow("SELECT id, first_name, last_name, email, is_author, created_at FROM users WHERE id = $1", id).Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.IsAuthor, &user.CreatedAt)
 
 	if err != nil {
 		log.Print(err)

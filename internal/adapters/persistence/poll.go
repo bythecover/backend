@@ -2,7 +2,6 @@ package persistence
 
 import (
 	"bythecover/backend/internal/core/domain"
-	"context"
 	"database/sql"
 
 	_ "github.com/lib/pq"
@@ -18,15 +17,15 @@ func NewPollPostgresRepository(db *sql.DB) pollPostgresRepository {
 	}
 }
 
-func (repo pollPostgresRepository) GetById(ctx context.Context, id int) (domain.Poll, error) {
+func (repo pollPostgresRepository) GetById(id int) (domain.Poll, error) {
 	var poll domain.Poll
-	err := repo.db.QueryRowContext(ctx, "SELECT id, title, created_by, created_at, expiration_date, expired FROM poll_events WHERE id = $1", id).Scan(&poll.Id, &poll.Title, &poll.CreatedBy, &poll.CreatedAt, &poll.ExpirationDate, &poll.Expired)
+	err := repo.db.QueryRow("SELECT id, title, created_by, created_at, expiration_date, expired FROM poll_events WHERE id = $1", id).Scan(&poll.Id, &poll.Title, &poll.CreatedBy, &poll.CreatedAt, &poll.ExpirationDate, &poll.Expired)
 
 	if err != nil {
 		return domain.Poll{}, err
 	}
 
-	rows, err := repo.db.QueryContext(ctx, "SELECT name, image FROM option WHERE poll_event_id = $1", id)
+	rows, err := repo.db.Query("SELECT name, image FROM option WHERE poll_event_id = $1", id)
 
 	if err != nil {
 		return domain.Poll{}, err

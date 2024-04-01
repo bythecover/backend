@@ -1,42 +1,40 @@
 package main
 
 import (
-	"bythecover/backend/internal/adapters/handler"
+	http_adapter "bythecover/backend/internal/adapters/http"
 	"bythecover/backend/internal/adapters/persistence"
 	"bythecover/backend/internal/core/services"
-
-	"github.com/gin-gonic/gin"
+	"log"
+	"net/http"
 )
-
-func SetupCors() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Header("Access-Control-Allow-Origin", "null")
-	}
-}
 
 func main() {
 	dbConnection := persistence.NewPostgresDatabase()
 
 	userRepo := persistence.NewUserPostgresRepository(dbConnection)
 	userService := services.NewUserService(userRepo)
-	userHandler := handler.NewUserHttpHandler(userService)
+	userHandler := http_adapter.NewUserHttpHandler(userService)
 
 	pollRepo := persistence.NewPollPostgresRepository(dbConnection)
 	pollService := services.NewPollService(pollRepo)
-	pollHandler := handler.NewPollHttpHandler(pollService)
+	pollHandler := http_adapter.NewPollHttpHandler(pollService)
 
 	voteRepo := persistence.NewVotePostgresRepository(dbConnection)
 	voteService := services.NewVoteService(voteRepo)
 
 	htmxService := services.NewHtmxService(voteService)
-	htmxHandler := handler.NewHtmxHttpHandler(htmxService, pollService)
+	htmxHandler := http_adapter.NewHtmxHttpHandler(htmxService, pollService)
 
-	route := gin.Default()
-	route.Use(SetupCors())
+	router := http.NewServeMux()
 
-	userHandler.RegisterRoutes(route)
-	pollHandler.RegisterRoutes(route)
-	htmxHandler.RegisterRoutes(route)
+	userHandler.RegisterRoutes(router)
+	pollHandler.RegisterRoutes(router)
+	htmxHandler.RegisterRoutes(router)
 
-	route.Run(":8080")
+	server := http.Server{
+		Handler: http_adapter.AllowCors(http_adapter.Logger(router)),
+		Addr:    ":8080",
+	}
+
+	log.Fatal(server.ListenAndServe())
 }

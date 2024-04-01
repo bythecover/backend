@@ -6,7 +6,7 @@ import (
 	"bythecover/backend/internal/core/services/templates/components"
 	"bythecover/backend/internal/core/services/templates/pages"
 
-	"github.com/gin-gonic/gin"
+	"github.com/a-h/templ"
 )
 
 type htmxService struct {
@@ -19,20 +19,16 @@ func NewHtmxService(voteService ports.VoteService) htmxService {
 	}
 }
 
-func (service htmxService) VotePage(poll domain.Poll, c *gin.Context) error {
-	c.Header("Content-Type", "text/html")
-	pages.VotePage(poll).Render(c, c.Writer)
-	return nil
+func (service htmxService) VotePage(poll domain.Poll) templ.Component {
+	return pages.VotePage(poll)
 }
 
-func (service htmxService) SubmitVote(c *gin.Context) error {
-	err := service.voteService.SubmitVote(c, 1)
+func (service htmxService) SubmitVote() templ.Component {
+	err := service.voteService.SubmitVote(1)
 
 	if err != nil {
-		components.Dialog(err).Render(c, c.Writer)
-		return nil
+		return components.Dialog(err)
 	}
 
-	components.Dialog(nil).Render(c, c.Writer)
-	return nil
+	return components.Dialog(nil)
 }

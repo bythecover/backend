@@ -2,7 +2,6 @@ package persistence
 
 import (
 	"bythecover/backend/internal/core/domain"
-	"context"
 	"database/sql"
 	"log"
 
@@ -19,8 +18,8 @@ func NewVotePostgresRepository(db *sql.DB) votePostgresRepository {
 	}
 }
 
-func (repo votePostgresRepository) SubmitVote(ctx context.Context, submission domain.Vote) error {
-	stmt, err := repo.db.PrepareContext(ctx, "INSERT INTO votes (selection, poll_event_id, source, user_id) VALUES($1, $2, $3, $4)")
+func (repo votePostgresRepository) SubmitVote(submission domain.Vote) error {
+	stmt, err := repo.db.Prepare("INSERT INTO votes (selection, poll_event_id, source, user_id) VALUES($1, $2, $3, $4)")
 	defer stmt.Close()
 
 	if err != nil {
@@ -28,7 +27,7 @@ func (repo votePostgresRepository) SubmitVote(ctx context.Context, submission do
 		return err
 	}
 
-	_, err2 := stmt.ExecContext(ctx, submission.Selection, submission.PollEventId, submission.Source, submission.UserId)
+	_, err2 := stmt.Exec(submission.Selection, submission.PollEventId, submission.Source, submission.UserId)
 
 	if err2 != nil {
 		return err

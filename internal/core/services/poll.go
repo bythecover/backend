@@ -3,10 +3,9 @@ package services
 import (
 	"bythecover/backend/internal/core/domain"
 	"bythecover/backend/internal/core/ports"
-	"context"
 )
 
-type pollService struct{
+type pollService struct {
 	repo ports.PollRepo
 }
 
@@ -16,8 +15,8 @@ func NewPollService(repo ports.PollRepo) pollService {
 	}
 }
 
-func (service pollService) GetById(ctx context.Context, id int) (domain.Poll, error) {
-	poll, err := service.repo.GetById(ctx, id)
+func (service pollService) GetById(id int) (domain.Poll, error) {
+	poll, err := service.repo.GetById(id)
 
 	return poll, err
 }

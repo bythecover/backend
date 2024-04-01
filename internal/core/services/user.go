@@ -3,7 +3,6 @@ package services
 import (
 	"bythecover/backend/internal/core/domain"
 	"bythecover/backend/internal/core/ports"
-	"context"
 )
 
 type userService struct {
@@ -38,6 +37,6 @@ func (service userService) GetAll() ([]ports.UserResp, error) {
 	return users, nil
 }
 
-func (service userService) GetUser(id int, ctx context.Context) (ports.UserResp, error) {
-	return service.repo.GetUser(id, ctx)
+func (service userService) GetUser(id int) (ports.UserResp, error) {
+	return service.repo.GetUser(id)
 }

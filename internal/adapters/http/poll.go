@@ -1,11 +1,11 @@
-package handler
+package http
 
 import (
 	"bythecover/backend/internal/core/ports"
+	"encoding/json"
 	"log"
+	"net/http"
 	"strconv"
-
-	"github.com/gin-gonic/gin"
 )
 
 type pollHttpHandler struct {
@@ -18,22 +18,23 @@ func NewPollHttpHandler(svc ports.PollService) pollHttpHandler {
 	}
 }
 
-func (handler pollHttpHandler) RegisterRoutes(route *gin.Engine) {
-	route.GET("/api/polls/:id", func(c *gin.Context) {
-		id, err := strconv.Atoi(c.Param("id"))
+func (handler pollHttpHandler) RegisterRoutes(router *http.ServeMux) {
+	router.HandleFunc("GET /polls/{id}", func(w http.ResponseWriter, r *http.Request) {
+		id, err := strconv.Atoi(r.PathValue("id"))
 
 		if err != nil {
 			log.Print(err)
-			c.AbortWithStatus(500)
+			w.WriteHeader(500)
 		} else {
-			poll, err := handler.service.GetById(c, id)
+			poll, err := handler.service.GetById(id)
 
 			// TODO: handle errors better here
 			if err != nil {
 				log.Print(err)
-				c.AbortWithStatus(400)
+				w.WriteHeader(400)
 			} else {
-				c.JSON(200, poll)
+				data, _ := json.Marshal(poll)
+				w.Write(data)
 			}
 		}
 	})
