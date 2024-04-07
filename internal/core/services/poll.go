@@ -6,17 +6,23 @@ import (
 )
 
 type pollService struct {
-	repo ports.PollRepo
+	pollRepo ports.PollRepo
+	voteRepo ports.VoteRepo
 }
 
-func NewPollService(repo ports.PollRepo) pollService {
+func NewPollService(pollRepo ports.PollRepo, voteRepo ports.VoteRepo) pollService {
 	return pollService{
-		repo,
+		pollRepo,
+		voteRepo,
 	}
 }
 
 func (service pollService) GetById(id int) (domain.Poll, error) {
-	poll, err := service.repo.GetById(id)
+	poll, err := service.pollRepo.GetById(id)
 
 	return poll, err
+}
+
+func (service pollService) SubmitVote(vote domain.Vote) error {
+	return service.voteRepo.SubmitVote(vote)
 }

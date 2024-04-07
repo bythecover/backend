@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "name": "Launch Web Server",
+            "type": "go",
+            "request": "launch",
+            "program": "${workspaceFolder}"
+        }
+    ]
+}

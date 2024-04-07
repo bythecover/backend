@@ -15,24 +15,21 @@ func main() {
 	userService := services.NewUserService(userRepo)
 	userHandler := http_adapter.NewUserHttpHandler(userService)
 
-	pollRepo := persistence.NewPollPostgresRepository(dbConnection)
-	pollService := services.NewPollService(pollRepo)
-	pollHandler := http_adapter.NewPollHttpHandler(pollService)
-
 	voteRepo := persistence.NewVotePostgresRepository(dbConnection)
-	voteService := services.NewVoteService(voteRepo)
 
-	htmxService := services.NewHtmxService(voteService)
-	htmxHandler := http_adapter.NewHtmxHttpHandler(htmxService, pollService)
+	pollRepo := persistence.NewPollPostgresRepository(dbConnection)
+	pollService := services.NewPollService(pollRepo, voteRepo)
+	pollAdapter := http_adapter.NewPollHttpHandler(pollService)
 
 	router := http.NewServeMux()
 
 	userHandler.RegisterRoutes(router)
-	pollHandler.RegisterRoutes(router)
-	htmxHandler.RegisterRoutes(router)
+	pollAdapter.RegisterRoutes(router)
+
+	middlewareStack := http_adapter.CreateStack(http_adapter.AllowCors, http_adapter.Logger)
 
 	server := http.Server{
-		Handler: http_adapter.AllowCors(http_adapter.Logger(router)),
+		Handler: middlewareStack(router),
 		Addr:    ":8080",
 	}
 
