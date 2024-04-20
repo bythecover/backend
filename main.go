@@ -21,10 +21,13 @@ func main() {
 	pollService := services.NewPollService(pollRepo, voteRepo)
 	pollAdapter := http_adapter.NewPollHttpHandler(pollService)
 
+	testHandler := http_adapter.TestHttpHandler{}
+
 	router := http.NewServeMux()
 
 	userHandler.RegisterRoutes(router)
 	pollAdapter.RegisterRoutes(router)
+	testHandler.RegisterRoutes(router)
 
 	middlewareStack := http_adapter.CreateStack(http_adapter.AllowCors, http_adapter.Logger)
 
