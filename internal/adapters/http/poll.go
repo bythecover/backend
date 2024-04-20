@@ -3,8 +3,8 @@ package http
 import (
 	"bythecover/backend/internal/core/domain"
 	"bythecover/backend/internal/core/ports"
-	"bythecover/backend/internal/core/services/templates/components"
-	"bythecover/backend/internal/core/services/templates/pages"
+	"bythecover/backend/internal/core/templates/components"
+	"bythecover/backend/internal/core/templates/pages"
 	"log"
 	"net/http"
 	"strconv"

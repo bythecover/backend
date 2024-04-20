@@ -1,2 +1,0 @@
-<html><head><link href=\"/output.css\" rel=\"stylesheet\"><title>My Page</title><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script></head><body><h1>something</h1>
-</body></html>

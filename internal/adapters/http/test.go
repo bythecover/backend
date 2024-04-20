@@ -1,7 +1,7 @@
 package http
 
 import (
-	"bythecover/backend/internal/core/services/templates/pages"
+	"bythecover/backend/internal/core/templates/pages"
 	"net/http"
 
 	"github.com/a-h/templ"
