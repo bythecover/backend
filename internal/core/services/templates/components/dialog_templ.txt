@@ -1,0 +1,2 @@
+<div class=\"absolute top-0 left-0 w-full h-full bg-black/20 grid place-items-center\"><div class=\"w-full max-w-96 bg-white px-8 py-4 rounded-lg\"><h1 class=\"text-center text-2xl font-semibold\">OH NO!</h1></div></div>
+<div class=\"absolute top-0 left-0 w-full h-full bg-black/20 grid place-items-center\"><div class=\"w-full max-w-96 bg-white px-8 py-4 rounded-lg\"><h1 class=\"text-center text-2xl font-semibold\">Submitted :)</h1></div></div>

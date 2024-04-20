@@ -5,6 +5,7 @@ import (
 	"bythecover/backend/internal/core/ports"
 	"bythecover/backend/internal/core/services/templates/components"
 	"bythecover/backend/internal/core/services/templates/pages"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -25,7 +26,10 @@ func (adapter pollHttpHandler) RegisterRoutes(router *http.ServeMux) {
 	router.HandleFunc("GET /polls/{id}", func(w http.ResponseWriter, r *http.Request) {
 		// convert string to number
 		id, _ := strconv.Atoi(r.PathValue("id"))
-		poll, _ := adapter.poll.GetById(id)
+		poll, err := adapter.poll.GetById(id)
+		if err != nil {
+			log.Fatalln(err)
+		}
 		templ.Handler(pages.VotePage(poll)).ServeHTTP(w, r)
 	})
 
@@ -41,12 +45,12 @@ func (adapter pollHttpHandler) RegisterRoutes(router *http.ServeMux) {
 		}
 
 		err := adapter.poll.SubmitVote(submission)
-		htmx := components.Dialog(nil)
+		dialog := components.Dialog(nil)
 
 		if err != nil {
-			htmx = components.Dialog(err)
+			dialog = components.Dialog(err)
 		}
 
-		templ.Handler(htmx).ServeHTTP(w, r)
+		templ.Handler(dialog).ServeHTTP(w, r)
 	})
 }

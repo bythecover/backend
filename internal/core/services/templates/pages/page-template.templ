@@ -1,14 +1,15 @@
 package pages
 
 templ NewPage() {
-    <html>
-        <head>
-            <title>My Page</title>
-            <script src="https://cdn.tailwindcss.com"></script>
-            <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-        </head>
-        <body>
-            { children... }
-        </body>
-    </html>
+	<html>
+		<head>
+			<link href="/output.css" rel="stylesheet"/>
+			<title>My Page</title>
+			<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+		</head>
+		<body>
+			<h1>Hello there</h1>
+			{ children... }
+		</body>
+	</html>
 }

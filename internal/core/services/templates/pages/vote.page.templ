@@ -1,15 +1,15 @@
 package pages
 
 import (
-    "bythecover/backend/internal/core/domain"
-    "bythecover/backend/internal/core/services/templates/pages/vote"
+	"bythecover/backend/internal/core/domain"
+	"bythecover/backend/internal/core/services/templates/pages/vote"
 )
 
 templ VotePage(poll domain.Poll) {
-    @NewPage() {
-        <div class="flex flex-row">
-            @vote.Option(poll.Options[0])
-            @vote.Option(poll.Options[1])
-        </div>
-    }
+	@NewPage() {
+		<div class="flex flex-row">
+			@vote.Option(poll, poll.Options[0])
+			@vote.Option(poll, poll.Options[1])
+		</div>
+	}
 }
