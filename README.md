@@ -22,7 +22,10 @@ This project was built with the "Ports and Adapters" architecture. A "port" can 
     - static/ - static files and hosting for the web
         - assets/ - css/image/js files
 
-# Steps to Run Dev Environment
+# Steps to Run Dev Environment with Docker
 1. Install the latest version of Docker and Docker compose
 2. Change directory to backend/
 3. run `docker compose up`
+
+# Steps to Run Dev Environment without Docker
+- `templ generate --watch --proxy=http://localhost:8080 -v --cmd='go run .'`

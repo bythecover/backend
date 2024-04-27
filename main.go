@@ -6,9 +6,15 @@ import (
 	"bythecover/backend/internal/core/services"
 	"log"
 	"net/http"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	if err := godotenv.Load(".env"); err != nil {
+		log.Fatal(err)
+	}
+
 	dbConnection := persistence.NewPostgresDatabase()
 
 	userRepo := persistence.NewUserPostgresRepository(dbConnection)
@@ -29,6 +35,7 @@ func main() {
 	pollAdapter.RegisterRoutes(router)
 	testHandler.RegisterRoutes(router)
 
+	router.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static/assets"))))
 	middlewareStack := http_adapter.CreateStack(http_adapter.AllowCors, http_adapter.Logger)
 
 	server := http.Server{

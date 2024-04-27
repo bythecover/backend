@@ -1,7 +1,6 @@
 package http
 
 import (
-	"bythecover/backend/internal/core/domain"
 	"bythecover/backend/internal/core/ports"
 	"bythecover/backend/internal/core/templates/components"
 	"bythecover/backend/internal/core/templates/pages"
@@ -26,6 +25,7 @@ func (adapter pollHttpHandler) RegisterRoutes(router *http.ServeMux) {
 	router.HandleFunc("GET /polls/{id}", func(w http.ResponseWriter, r *http.Request) {
 		// convert string to number
 		id, _ := strconv.Atoi(r.PathValue("id"))
+
 		poll, err := adapter.poll.GetById(id)
 		if err != nil {
 			log.Fatalln(err)
@@ -33,18 +33,13 @@ func (adapter pollHttpHandler) RegisterRoutes(router *http.ServeMux) {
 		templ.Handler(pages.VotePage(poll)).ServeHTTP(w, r)
 	})
 
-	// handle vote submission
+	// vote submission
 	router.HandleFunc("POST /polls/{id}", func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		selectedId, _ := strconv.Atoi(r.PostFormValue("selection"))
 		pollId, _ := strconv.Atoi(r.PathValue("id"))
 
-		submission := domain.Vote{
-			Selection:   selectedId,
-			PollEventId: pollId,
-		}
-
-		err := adapter.poll.SubmitVote(submission)
+		err := adapter.poll.SubmitVote(selectedId, pollId)
 		dialog := components.Dialog(nil)
 
 		if err != nil {

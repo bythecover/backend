@@ -10,5 +10,5 @@ type PollRepo interface {
 
 type PollService interface {
 	GetById(int) (domain.Poll, error)
-	SubmitVote(vote domain.Vote) error
+	SubmitVote(int, int) error
 }

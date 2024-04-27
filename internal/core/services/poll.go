@@ -23,6 +23,11 @@ func (service pollService) GetById(id int) (domain.Poll, error) {
 	return poll, err
 }
 
-func (service pollService) SubmitVote(vote domain.Vote) error {
-	return service.voteRepo.SubmitVote(vote)
+func (service pollService) SubmitVote(selectionId int, pollEventId int) error {
+	submission := domain.Vote{
+		Selection:   selectionId,
+		PollEventId: pollEventId,
+	}
+
+	return service.voteRepo.SubmitVote(submission)
 }

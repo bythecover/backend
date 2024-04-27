@@ -1,18 +1,4 @@
 services:
-  backend:
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    build:
-      dockerfile: ./Dockerfile
-    environment:
-      - DB_USER=postgres_admin
-      - DB_PASS=password
-      - DB_HOST=host.docker.internal
-      - DB_SSL_MODE=disable
-    volumes:
-      - .:/user/src/app
-    ports:
-      - "7331:7331"
   nginx:
     build:
       dockerfile: ./static/nginx.Dockerfile
