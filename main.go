@@ -1,35 +1,46 @@
 package main
 
 import (
-	http_adapter "bythecover/backend/internal/adapters/http"
+	adapters "bythecover/backend/internal/adapters/http"
 	"bythecover/backend/internal/adapters/persistence"
 	"bythecover/backend/internal/core/services"
 	"log"
 	"net/http"
+
+	"github.com/goloop/env"
 )
 
 func main() {
+	if err := env.Update(".env"); err != nil {
+		log.Fatalln(err)
+	}
+
 	dbConnection := persistence.NewPostgresDatabase()
+	sessionStore := make(adapters.SessionStore)
 
 	userRepo := persistence.NewUserPostgresRepository(dbConnection)
 	userService := services.NewUserService(userRepo)
-	userHandler := http_adapter.NewUserHttpHandler(userService)
+	userAdapter := adapters.NewUserHttpAdapter(userService)
 
 	voteRepo := persistence.NewVotePostgresRepository(dbConnection)
 
 	pollRepo := persistence.NewPollPostgresRepository(dbConnection)
 	pollService := services.NewPollService(pollRepo, voteRepo)
-	pollAdapter := http_adapter.NewPollHttpHandler(pollService)
-
-	testHandler := http_adapter.TestHttpHandler{}
+	pollAdapter := adapters.NewPollHttpAdapter(pollService)
 
 	router := http.NewServeMux()
 
-	userHandler.RegisterRoutes(router)
+	userAdapter.RegisterRoutes(router)
 	pollAdapter.RegisterRoutes(router)
-	testHandler.RegisterRoutes(router)
 
-	middlewareStack := http_adapter.CreateStack(http_adapter.AllowCors, http_adapter.Logger)
+	sessionHandler := adapters.HandlerWithSession(sessionStore)
+	middlewareStack := adapters.CreateStack(sessionHandler, adapters.AllowCors, adapters.Logger)
+
+	// TODO: fix this
+	auth, _ := services.New()
+
+	loginAdapter := adapters.NewLoginHttpAdapter(auth)
+	loginAdapter.RegisterRoutes(router)
 
 	server := http.Server{
 		Handler: middlewareStack(router),

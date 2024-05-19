@@ -12,45 +12,47 @@ import (
 	"github.com/a-h/templ"
 )
 
-type pollHttpHandler struct {
+type pollHttpAdapter struct {
 	poll ports.PollService
 }
 
-func NewPollHttpHandler(poll ports.PollService) pollHttpHandler {
-	return pollHttpHandler{
+func NewPollHttpAdapter(poll ports.PollService) pollHttpAdapter {
+	return pollHttpAdapter{
 		poll,
 	}
 }
 
-func (adapter pollHttpHandler) RegisterRoutes(router *http.ServeMux) {
-	router.HandleFunc("GET /polls/{id}", func(w http.ResponseWriter, r *http.Request) {
-		// convert string to number
-		id, _ := strconv.Atoi(r.PathValue("id"))
-		poll, err := adapter.poll.GetById(id)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		templ.Handler(pages.VotePage(poll)).ServeHTTP(w, r)
-	})
+func (adapter pollHttpAdapter) RegisterRoutes(router *http.ServeMux) {
+	router.HandleFunc("GET /polls/{id}", adapter.getPollPage)
+	router.HandleFunc("POST /polls/{id}", adapter.submitVote)
+}
 
-	// handle vote submission
-	router.HandleFunc("POST /polls/{id}", func(w http.ResponseWriter, r *http.Request) {
-		r.ParseForm()
-		selectedId, _ := strconv.Atoi(r.PostFormValue("selection"))
-		pollId, _ := strconv.Atoi(r.PathValue("id"))
+func (adapter pollHttpAdapter) submitVote(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	selectedId, _ := strconv.Atoi(r.PostFormValue("selection"))
+	pollId, _ := strconv.Atoi(r.PathValue("id"))
 
-		submission := domain.Vote{
-			Selection:   selectedId,
-			PollEventId: pollId,
-		}
+	submission := domain.Vote{
+		Selection:   selectedId,
+		PollEventId: pollId,
+	}
 
-		err := adapter.poll.SubmitVote(submission)
-		dialog := components.Dialog(nil)
+	err := adapter.poll.SubmitVote(submission)
+	dialog := components.Dialog(nil)
 
-		if err != nil {
-			dialog = components.Dialog(err)
-		}
+	if err != nil {
+		dialog = components.Dialog(err)
+	}
 
-		templ.Handler(dialog).ServeHTTP(w, r)
-	})
+	templ.Handler(dialog).ServeHTTP(w, r)
+}
+
+func (adapter pollHttpAdapter) getPollPage(w http.ResponseWriter, r *http.Request) {
+	// convert string to number
+	id, _ := strconv.Atoi(r.PathValue("id"))
+	poll, err := adapter.poll.GetById(id)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	templ.Handler(pages.VotePage(poll)).ServeHTTP(w, r)
 }

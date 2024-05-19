@@ -10,12 +10,12 @@ import (
 	"net/http"
 )
 
-type userHttpHandler struct {
+type userHttpAdapter struct {
 	userService ports.UserService
 }
 
-func NewUserHttpHandler(userService ports.UserService) userHttpHandler {
-	return userHttpHandler{
+func NewUserHttpAdapter(userService ports.UserService) userHttpAdapter {
+	return userHttpAdapter{
 		userService,
 	}
 }
@@ -25,45 +25,48 @@ func decode[V any](r io.Reader, p V) error {
 	return d.Decode(p)
 }
 
-func (adapter userHttpHandler) RegisterRoutes(router *http.ServeMux) {
-	router.HandleFunc("POST /user", func(w http.ResponseWriter, r *http.Request) {
-		var person ports.UserResp
-		err := decode(r.Body, &person)
+func (adapter userHttpAdapter) RegisterRoutes(router *http.ServeMux) {
+	router.HandleFunc("POST /user", adapter.createUser)
+	router.HandleFunc("GET /user/{id}", adapter.getUser)
+}
 
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
+func (adapter userHttpAdapter) createUser(w http.ResponseWriter, r *http.Request) {
+	var person ports.UserResp
+	err := decode(r.Body, &person)
 
-		err = adapter.userService.Create(person)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
-		w.WriteHeader(http.StatusOK)
-	})
+	err = adapter.userService.Create(person)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
-	router.HandleFunc("GET /user/{id}", func(w http.ResponseWriter, r *http.Request) {
-		id, err := strconv.Atoi(r.PathValue("id"))
+	w.WriteHeader(http.StatusOK)
+}
 
-		if err != nil {
-			log.Print(err)
-			w.WriteHeader(http.StatusInternalServerError)
-		}
+func (adapter userHttpAdapter) getUser(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.PathValue("id"))
 
-		user, err := adapter.userService.GetUser(id)
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 
-		if err != nil {
-			if err == ports.ErrUserNotFound {
-				w.WriteHeader(http.StatusNotFound)
-			} else {
-				w.WriteHeader(http.StatusInternalServerError)
-			}
+	user, err := adapter.userService.GetUser(id)
+
+	if err != nil {
+		if err == ports.ErrUserNotFound {
+			w.WriteHeader(http.StatusNotFound)
 		} else {
-			user, _ := json.Marshal(user)
-			w.Write(user)
+			w.WriteHeader(http.StatusInternalServerError)
 		}
+	} else {
+		user, _ := json.Marshal(user)
+		w.Write(user)
+	}
 
-	})
 }
