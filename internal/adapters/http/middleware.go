@@ -2,12 +2,9 @@
 package http
 
 import (
-	"context"
+	"bythecover/backend/internal/core/services/sessions"
 	"log"
 	"net/http"
-	"slices"
-
-	"github.com/google/uuid"
 )
 
 // A WrappedWriter exposes the status code to be able to print in the Logger
@@ -41,46 +38,45 @@ func Logger(next http.Handler) http.Handler {
 
 // HandlerWithSessionStore Creates a Middleware function that adds the session store
 // to the context of the current request
-func HandlerWithSession(store SessionStore) Middleware {
+func HandlerWithSession(store sessions.SessionStore) Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			var session *Session
+			var session *sessions.Session
 
-			cookieIndex := slices.IndexFunc(r.Cookies(), func(c *http.Cookie) bool { return c.Name == SESSION_COOKIE_NAME })
-			requestHasSessionCookie := cookieIndex >= 0
+			cookie, err := r.Cookie(sessions.SESSION_COOKIE_NAME)
 
-			if requestHasSessionCookie {
-				// TODO: Handle when the store lookup fails
-				log.Println("request has Session cookie")
-				session = store[r.Cookies()[cookieIndex].Value]
+			if err == nil {
+				sessionId := cookie.Value
+				session, err = store.Get(sessionId)
+
+				if err != nil {
+					session = sessions.New()
+					addNewSessionToCookie(w, session)
+				}
 			} else {
-				session = &Session{
-					State: "",
-				}
-
-				// save new session to store
-				sessionId := uuid.New().String()
-				store[sessionId] = session
-
-				// send sessionid cookie to client
-				sessionCookie := http.Cookie{
-					Name:     "sessionid",
-					Value:    sessionId,
-					Secure:   true,
-					HttpOnly: true,
-					MaxAge:   0,
-				}
-				http.SetCookie(w, &sessionCookie)
+				session = sessions.New()
+				addNewSessionToCookie(w, session)
 			}
 
-			// add the session object to the context
-			log.Println("setting session to the following")
-			log.Println(session)
-			newContext := context.WithValue(r.Context(), "session", session)
-			newRequest := r.WithContext(newContext)
-			next.ServeHTTP(w, newRequest)
+			// Add the session to the context
+			newContext := sessions.NewContext(r.Context(), session)
+			next.ServeHTTP(w, r.WithContext(newContext))
 		})
 	}
+}
+
+// Create a new Session and save its ID to the cookie and send the cookie as a response
+func addNewSessionToCookie(w http.ResponseWriter, session *sessions.Session) {
+	sessionId := session.Save().String()
+	sessionCookie := http.Cookie{
+		Name:     "sessionid",
+		Value:    sessionId,
+		Secure:   true,
+		HttpOnly: true,
+		MaxAge:   0,
+	}
+
+	http.SetCookie(w, &sessionCookie)
 }
 
 type Middleware func(http.Handler) http.Handler

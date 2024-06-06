@@ -1,4 +1,4 @@
-package services
+package authenticator
 
 import (
 	"context"

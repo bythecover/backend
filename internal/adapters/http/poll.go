@@ -16,13 +16,15 @@ type pollHttpAdapter struct {
 	poll ports.PollService
 }
 
-func NewPollHttpAdapter(poll ports.PollService) pollHttpAdapter {
-	return pollHttpAdapter{
+func NewPollHttpAdapter(poll ports.PollService, router *http.ServeMux) pollHttpAdapter {
+	adapter := pollHttpAdapter{
 		poll,
 	}
+	adapter.registerRoutes(router)
+	return adapter
 }
 
-func (adapter pollHttpAdapter) RegisterRoutes(router *http.ServeMux) {
+func (adapter pollHttpAdapter) registerRoutes(router *http.ServeMux) {
 	router.HandleFunc("GET /polls/{id}", adapter.getPollPage)
 	router.HandleFunc("POST /polls/{id}", adapter.submitVote)
 }

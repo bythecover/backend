@@ -18,9 +18,7 @@ func NewPollService(pollRepo ports.PollRepo, voteRepo ports.VoteRepo) pollServic
 }
 
 func (service pollService) GetById(id int) (domain.Poll, error) {
-	poll, err := service.pollRepo.GetById(id)
-
-	return poll, err
+	return service.pollRepo.GetById(id)
 }
 
 func (service pollService) SubmitVote(vote domain.Vote) error {

@@ -4,6 +4,8 @@ import (
 	adapters "bythecover/backend/internal/adapters/http"
 	"bythecover/backend/internal/adapters/persistence"
 	"bythecover/backend/internal/core/services"
+	"bythecover/backend/internal/core/services/authenticator"
+	"bythecover/backend/internal/core/services/sessions"
 	"log"
 	"net/http"
 
@@ -15,8 +17,11 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	router := http.NewServeMux()
+
 	dbConnection := persistence.NewPostgresDatabase()
-	sessionStore := make(adapters.SessionStore)
+	sessionStore := make(sessions.MemoryStore)
+	sessions.CreateStore(sessionStore)
 
 	userRepo := persistence.NewUserPostgresRepository(dbConnection)
 	userService := services.NewUserService(userRepo)
@@ -26,21 +31,19 @@ func main() {
 
 	pollRepo := persistence.NewPollPostgresRepository(dbConnection)
 	pollService := services.NewPollService(pollRepo, voteRepo)
-	pollAdapter := adapters.NewPollHttpAdapter(pollService)
-
-	router := http.NewServeMux()
+	adapters.NewPollHttpAdapter(pollService, router)
 
 	userAdapter.RegisterRoutes(router)
-	pollAdapter.RegisterRoutes(router)
 
 	sessionHandler := adapters.HandlerWithSession(sessionStore)
 	middlewareStack := adapters.CreateStack(sessionHandler, adapters.AllowCors, adapters.Logger)
 
-	// TODO: fix this
-	auth, _ := services.New()
+	authService, _ := authenticator.New()
 
-	loginAdapter := adapters.NewLoginHttpAdapter(auth)
-	loginAdapter.RegisterRoutes(router)
+	adapters.NewLoginHttpAdapter(authService, router)
+
+	callbackAdapter := adapters.NewCallbackHttpAdapter(authService)
+	callbackAdapter.RegisterRoutes(router)
 
 	server := http.Server{
 		Handler: middlewareStack(router),

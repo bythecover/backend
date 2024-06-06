@@ -6,46 +6,46 @@ import (
 	"log"
 	"net/http"
 
-	"bythecover/backend/internal/core/services"
+	"bythecover/backend/internal/core/services/authenticator"
+	"bythecover/backend/internal/core/services/sessions"
 )
 
 type loginHttpAdapter struct {
-	authenticator *services.Authenticator
+	authenticator *authenticator.Authenticator
 }
 
-func NewLoginHttpAdapter(authenticator *services.Authenticator) loginHttpAdapter {
-	return loginHttpAdapter{
+func NewLoginHttpAdapter(authenticator *authenticator.Authenticator, router *http.ServeMux) loginHttpAdapter {
+	adapter := loginHttpAdapter{
 		authenticator,
 	}
+	adapter.RegisterRoutes(router)
+	return adapter
 }
 
 func (adapter loginHttpAdapter) RegisterRoutes(router *http.ServeMux) {
 	router.HandleFunc("GET /test", adapter.loginHandler)
 }
 
-// Handler for our login.
 func (adapter loginHttpAdapter) loginHandler(w http.ResponseWriter, r *http.Request) {
-	state, err := generateRandomState()
+	session, err := sessions.WithSession(r.Context())
+
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		log.Fatalln(err)
 		return
-	}
-
-	session := r.Context().Value("session").(*Session)
-
-	if session == nil {
-		log.Fatalln("session is nil")
 	}
 
 	if session.State != "" {
 		log.Println("session already has state")
-		log.Println(session.State)
+		log.Println(session)
 		w.WriteHeader(http.StatusOK)
 		return
 	}
 
+	state, _ := generateRandomState()
+
 	session.State = state
+	session.Save()
 	log.Println(session.State)
 
 	http.Redirect(w, r, adapter.authenticator.AuthCodeURL(state), http.StatusTemporaryRedirect)
