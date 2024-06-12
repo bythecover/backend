@@ -1,11 +1,12 @@
 package main
 
 import (
-	adapters "bythecover/backend/internal/adapters/http"
-	"bythecover/backend/internal/adapters/persistence"
-	"bythecover/backend/internal/core/services"
-	"bythecover/backend/internal/core/services/authenticator"
-	"bythecover/backend/internal/core/services/sessions"
+	"github.com/bythecover/backend/authenticator"
+	"github.com/bythecover/backend/http/middleware"
+	"github.com/bythecover/backend/http/routers"
+	"github.com/bythecover/backend/persistence"
+	"github.com/bythecover/backend/services"
+	"github.com/bythecover/backend/sessions"
 	"log"
 	"net/http"
 
@@ -20,30 +21,27 @@ func main() {
 	router := http.NewServeMux()
 
 	dbConnection := persistence.NewPostgresDatabase()
+
 	sessionStore := make(sessions.MemoryStore)
 	sessions.CreateStore(sessionStore)
 
 	userRepo := persistence.NewUserPostgresRepository(dbConnection)
 	userService := services.NewUserService(userRepo)
-	userAdapter := adapters.NewUserHttpAdapter(userService)
 
 	voteRepo := persistence.NewVotePostgresRepository(dbConnection)
 
 	pollRepo := persistence.NewPollPostgresRepository(dbConnection)
 	pollService := services.NewPollService(pollRepo, voteRepo)
-	adapters.NewPollHttpAdapter(pollService, router)
 
-	userAdapter.RegisterRoutes(router)
-
-	sessionHandler := adapters.HandlerWithSession(sessionStore)
-	middlewareStack := adapters.CreateStack(sessionHandler, adapters.AllowCors, adapters.Logger)
+	sessionHandler := middleware.HandlerWithSession(sessionStore)
+	middlewareStack := middleware.CreateStack(sessionHandler, middleware.AllowCors, middleware.Logger)
 
 	authService, _ := authenticator.New()
 
-	adapters.NewLoginHttpAdapter(authService, router)
-
-	callbackAdapter := adapters.NewCallbackHttpAdapter(authService)
-	callbackAdapter.RegisterRoutes(router)
+	routers.NewLoginHttpAdapter(authService, router)
+	routers.NewCallbackHttpAdapter(authService, router)
+	routers.NewPollHttpAdapter(pollService, router)
+	routers.NewUserHttpAdapter(userService, router)
 
 	server := http.Server{
 		Handler: middlewareStack(router),

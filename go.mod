@@ -1,4 +1,4 @@
-module bythecover/backend
+module github.com/bythecover/backend
 
 go 1.22
 
