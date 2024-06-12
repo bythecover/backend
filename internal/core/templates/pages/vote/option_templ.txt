@@ -1,4 +1,0 @@
-<button name=\"selection\" value=\"
-\" hx-post=\"
-\" hx-swap=\"afterbegin\" hx-target=\"body\" class=\"group h-screen w-1/2 transition-all duration-200 ease-in-out hover:w-11/12 hover:bg-gray active:bg-blue-950 text-5xl\"><img class=\"transition-all m-auto h-full w-full group-hover:w-auto\" src=\"
-\"></button>
