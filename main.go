@@ -1,35 +1,47 @@
 package main
 
 import (
-	http_adapter "bythecover/backend/internal/adapters/http"
-	"bythecover/backend/internal/adapters/persistence"
-	"bythecover/backend/internal/core/services"
+	"github.com/bythecover/backend/authenticator"
+	"github.com/bythecover/backend/http/middleware"
+	"github.com/bythecover/backend/http/routers"
+	"github.com/bythecover/backend/persistence"
+	"github.com/bythecover/backend/services"
+	"github.com/bythecover/backend/sessions"
 	"log"
 	"net/http"
+
+	"github.com/goloop/env"
 )
 
 func main() {
+	if err := env.Update(".env"); err != nil {
+		log.Fatalln(err)
+	}
+
+	router := http.NewServeMux()
+
 	dbConnection := persistence.NewPostgresDatabase()
+
+	sessionStore := make(sessions.MemoryStore)
+	sessions.CreateStore(sessionStore)
 
 	userRepo := persistence.NewUserPostgresRepository(dbConnection)
 	userService := services.NewUserService(userRepo)
-	userHandler := http_adapter.NewUserHttpHandler(userService)
 
 	voteRepo := persistence.NewVotePostgresRepository(dbConnection)
 
 	pollRepo := persistence.NewPollPostgresRepository(dbConnection)
 	pollService := services.NewPollService(pollRepo, voteRepo)
-	pollAdapter := http_adapter.NewPollHttpHandler(pollService)
 
-	testHandler := http_adapter.TestHttpHandler{}
+	sessionHandler := middleware.HandlerWithSession(sessionStore)
+	middlewareStack := middleware.CreateStack(sessionHandler, middleware.AllowCors, middleware.Logger)
 
-	router := http.NewServeMux()
+	authService, _ := authenticator.New()
 
-	userHandler.RegisterRoutes(router)
-	pollAdapter.RegisterRoutes(router)
-	testHandler.RegisterRoutes(router)
-
-	middlewareStack := http_adapter.CreateStack(http_adapter.AllowCors, http_adapter.Logger)
+	routers.NewLoginHttpAdapter(authService, router)
+	routers.NewCallbackHttpAdapter(authService, router)
+	routers.NewPollHttpAdapter(pollService, router)
+	routers.NewUserHttpAdapter(userService, router)
 
 	server := http.Server{
 		Handler: middlewareStack(router),
