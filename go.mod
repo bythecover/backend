@@ -5,6 +5,7 @@ go 1.22
 require (
 	github.com/a-h/templ v0.2.648
 	github.com/goloop/env v1.2.0
+	github.com/google/uuid v1.6.0
 	github.com/lib/pq v1.10.9
 	golang.org/x/oauth2 v0.13.0
 )
@@ -12,7 +13,6 @@ require (
 require (
 	github.com/go-jose/go-jose/v4 v4.0.1 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/stretchr/testify v1.9.0 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
