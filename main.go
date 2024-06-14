@@ -42,6 +42,7 @@ func main() {
 	routers.NewCallbackHttpAdapter(authService, router)
 	routers.NewPollHttpAdapter(pollService, router)
 	routers.NewUserHttpAdapter(userService, router)
+	routers.NewStaticHttpAdapter(router)
 
 	server := http.Server{
 		Handler: middlewareStack(router),
