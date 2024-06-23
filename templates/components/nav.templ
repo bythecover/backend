@@ -1,0 +1,16 @@
+package components
+
+import "github.com/bythecover/backend/sessions"
+
+templ Nav(session *sessions.Session) {
+	<nav class="bg-white py-3 px-6 flex justify-between shadow-sm w-full items-center">
+		<div class="flex items-center gap-3">
+			<img class="max-w-10 h-auto mr-3" src="http://localhost:8080/static/Logo.png"/>
+			<a>Home</a>
+			<a>About</a>
+		</div>
+		if session != nil {
+			<p class="right-5">{ session.Profile.Name }</p>
+		}
+	</nav>
+}

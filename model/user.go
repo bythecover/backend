@@ -14,7 +14,7 @@ var (
 )
 
 type UserResp struct {
-	Id        *int       `json:"id,omitempty"`
+	Id        string     `json:"id,omitempty"`
 	FirstName string     `json:"first_name"`
 	LastName  string     `json:"last_name"`
 	Email     string     `json:"email"`
@@ -35,13 +35,14 @@ type Email string
 type IsAuthor bool
 
 type User struct {
+	Id        string
 	FirstName FirstName
 	LastName  LastName
 	Email     Email
 	IsAuthor  IsAuthor
 }
 
-func NewUser(firstName string, lastName string, email string, isAuthor bool) (User, error) {
+func NewUser(Id string, firstName string, lastName string, email string, isAuthor bool) (User, error) {
 	if firstName == "" {
 		log.Print(ErrEmptyName)
 		return User{}, ErrEmptyName
@@ -58,6 +59,7 @@ func NewUser(firstName string, lastName string, email string, isAuthor bool) (Us
 	}
 
 	return User{
+		Id,
 		FirstName(firstName),
 		LastName(lastName),
 		Email(email),

@@ -11,8 +11,11 @@ require (
 )
 
 require (
+	github.com/cloudinary/cloudinary-go/v2 v2.7.0 // indirect
+	github.com/creasty/defaults v1.5.1 // indirect
 	github.com/go-jose/go-jose/v4 v4.0.1 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/gorilla/schema v1.2.0 // indirect
 	github.com/stretchr/testify v1.9.0 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect

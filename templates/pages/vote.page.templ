@@ -2,14 +2,44 @@ package pages
 
 import (
 	"github.com/bythecover/backend/model"
-	"github.com/bythecover/backend/templates/pages/vote"
+	"github.com/bythecover/backend/templates/components"
+	"github.com/bythecover/backend/sessions"
+	"strconv"
+	"strings"
 )
 
-templ VotePage(poll model.Poll) {
-	@NewPage() {
-		<div class="flex flex-row">
-			@vote.Option(poll, poll.Options[0])
-			@vote.Option(poll, poll.Options[1])
+templ VotePage(poll model.Poll, session *sessions.Session) {
+	@NewPage(session) {
+		<div class="relative top-1/2 translate-y-[-50%]">
+			<h1 class="text-center font-bold text-3xl">{ poll.Title }</h1>
+			<form hx-post={ "/polls/" + strconv.Itoa(poll.Id) } hx-target="body" hx-swap="afterbegin">
+				@components.Carousel(generateCards(poll.Options))
+				<div class="text-center">
+					<button class="text-center m-auto bg-green-500 rounded-md px-6 py-2 text-white font-bold">Submit</button>
+				</div>
+			</form>
 		</div>
 	}
+	<script src="http://localhost:8080/static/vote.page.js"></script>
+}
+
+templ carouselCard(image string, name string, id string) {
+	<input name="selection" id={ hyphenateTitle(name) } value={ id } class="hidden" type="radio"/>
+	<label class="bg-gradient-to-r max-w-60 inline-block snap-center mx-3 scale-100" for={ hyphenateTitle(name) } data-carousel-card><img class="max-h-full" src={ "https://res.cloudinary.com/degz1nuus/image/upload/v1704576289/By%20The%20Cover/polls/" + image }/></label>
+}
+
+func hyphenateTitle(title string) string {
+	return strings.ReplaceAll(title, " ", "-")
+}
+
+func generateCards(options []model.Option) []templ.Component {
+	cards := []templ.Component{}
+
+	for _, item := range options {
+		id := strconv.Itoa(item.Id)
+		cards = append(cards, carouselCard(item.Image, item.Name, id))
+
+	}
+
+	return cards
 }

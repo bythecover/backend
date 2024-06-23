@@ -12,9 +12,16 @@ const SESSION_COOKIE_NAME = "sessionid"
 type Session struct {
 	store       SessionStore
 	State       string
-	Profile     interface{}
+	Profile     Auth0User
 	AccessToken string
-	id          uuid.UUID
+	Id          uuid.UUID
+}
+
+type Auth0User struct {
+	Name     string `json:"name"`
+	Nickname string `json:"nickname"`
+	Picture  string `json:"picture"`
+	UserId   string `json:"sub"`
 }
 
 // Creates a new Session

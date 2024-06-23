@@ -1,14 +1,18 @@
 package pages
 
-templ NewPage() {
-	<html>
+import "github.com/bythecover/backend/templates/components"
+import "github.com/bythecover/backend/sessions"
+
+templ NewPage(session *sessions.Session) {
+	<!DOCTYPE html>
+	<html lang="en">
 		<head>
-			<link href="http://localhost:8080/static/assets/output.css" rel="stylesheet"/>
+			<link href="http://localhost:8080/static/output.css" rel="stylesheet"/>
 			<title>My Page</title>
 			<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 		</head>
-		<body>
-			<h1 class="text-3xl">Hello there</h1>
+		<body class="bg-gray-300 h-[100vh]">
+			@components.Nav(session)
 			{ children... }
 		</body>
 	</html>

@@ -15,5 +15,5 @@ type Poll struct {
 type Option struct {
 	Image string `json:"image"`
 	Name  string `json:"name"`
+	Id    int
 }
-
