@@ -9,5 +9,5 @@ func NewStaticHttpAdapter(router *http.ServeMux) {
 }
 
 func registerRoutes(router *http.ServeMux) {
-	router.Handle("GET /static/", http.FileServer(http.Dir("./")))
+	router.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static/assets"))))
 }

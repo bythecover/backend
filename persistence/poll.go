@@ -25,7 +25,7 @@ func (repo pollPostgresRepository) GetById(id int) (model.Poll, error) {
 		return model.Poll{}, err
 	}
 
-	rows, err := repo.db.Query("SELECT name, image FROM option WHERE poll_event_id = $1", id)
+	rows, err := repo.db.Query("SELECT name, image, id FROM option WHERE poll_event_id = $1", id)
 
 	if err != nil {
 		return model.Poll{}, err
@@ -34,7 +34,7 @@ func (repo pollPostgresRepository) GetById(id int) (model.Poll, error) {
 	var options []model.Option
 	for rows.Next() {
 		var option model.Option
-		rows.Scan(&option.Name, &option.Image)
+		rows.Scan(&option.Name, &option.Image, &option.Id)
 		options = append(options, option)
 	}
 

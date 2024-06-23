@@ -6,7 +6,7 @@ import (
 )
 
 type userService struct {
-	repo persistence.UserRepo
+	userRepo persistence.UserRepo
 }
 
 type UserService interface {
@@ -15,26 +15,26 @@ type UserService interface {
 	GetUser(int) (model.UserResp, error)
 }
 
-func NewUserService(repo persistence.UserRepo) userService {
+func NewUserService(userRepo persistence.UserRepo) userService {
 	return userService{
-		repo,
+		userRepo,
 	}
 }
 
 func (service userService) Create(input model.UserResp) error {
-	user, err := model.NewUser(input.FirstName, input.LastName, input.Email, input.IsAuthor)
+	user, err := model.NewUser(input.Id, input.FirstName, input.LastName, input.Email, input.IsAuthor)
 
 	if err != nil {
 		return err
 	}
 
-	err = service.repo.Save(user)
+	err = service.userRepo.Save(user)
 
 	return err
 }
 
 func (service userService) GetAll() ([]model.UserResp, error) {
-	users, err := service.repo.GetAll()
+	users, err := service.userRepo.GetAll()
 
 	if err != nil {
 		return nil, err
@@ -44,5 +44,5 @@ func (service userService) GetAll() ([]model.UserResp, error) {
 }
 
 func (service userService) GetUser(id int) (model.UserResp, error) {
-	return service.repo.GetUser(id)
+	return service.userRepo.GetUser(id)
 }

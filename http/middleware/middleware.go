@@ -1,9 +1,10 @@
 package middleware
 
 import (
-	"github.com/bythecover/backend/sessions"
 	"log"
 	"net/http"
+
+	"github.com/bythecover/backend/sessions"
 )
 
 // A WrappedWriter exposes the status code to be able to print in the Logger
@@ -42,17 +43,21 @@ func HandlerWithSession(store sessions.SessionStore) Middleware {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			var session *sessions.Session
 
+			log.Println("looking for session cookie")
 			cookie, err := r.Cookie(sessions.SESSION_COOKIE_NAME)
 
 			if err == nil {
+				log.Println("found session cookie")
 				sessionId := cookie.Value
 				session, err = store.Get(sessionId)
 
 				if err != nil {
+					log.Println("did not find session in store")
 					session = sessions.New()
 					addNewSessionToCookie(w, session)
 				}
 			} else {
+				log.Println("did not find session cookie")
 				session = sessions.New()
 				addNewSessionToCookie(w, session)
 			}

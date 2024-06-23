@@ -1,0 +1,20 @@
+package pages
+
+import "github.com/bythecover/backend/sessions"
+
+templ CreatePage(session *sessions.Session) {
+	@NewPage(session) {
+		<form hx-post={ "/polls/admin" } enctype="multipart/form-data" class="m-auto bg-white w-4/6 mt-5 rounded-md p-3">
+			<input type="text" name="title" placeholder="Name of the Book" required class="text-left bg-gray-300 rounded-md p-3"/>
+			<button class="bg-green-500 hover:bg-green-600 active:bg-green-800 text-white font-bold rounded-lg text-center p-3" data-add-config onclick="addOption()" type="button">Add Another Cover</button>
+			<div class="my-3">
+				<div data-option-config class="text-center my-2">
+					<input name="image" type="file" accept="image/*" required/>
+					<button class="bg-red-500 hover:bg-red-600 active:bg-red-800 text-white font-bold py-1 px-5 rounded-lg" type="button" onclick="removeOption(this)">remove</button>
+				</div>
+			</div>
+			<button class="bg-green-500 hover:bg-green-600 active:bg-green-800 text-white font-bold p-3 rounded-lg text-center" type="submit">Submit</button>
+		</form>
+	}
+	<script src="http://localhost:8080/static/create.page.js"></script>
+}

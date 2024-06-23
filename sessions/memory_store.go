@@ -12,13 +12,13 @@ import (
 type MemoryStore map[string]*Session
 
 func (store MemoryStore) Save(session *Session) uuid.UUID {
-	sessionExists := session.id.ID() != 0
+	sessionExists := session.Id.ID() != 0
 	if !sessionExists {
 		id := uuid.New()
-		session.id = id
+		session.Id = id
 	}
-	store[session.id.String()] = session
-	return session.id
+	store[session.Id.String()] = session
+	return session.Id
 }
 
 func (store MemoryStore) Get(id string) (*Session, error) {
