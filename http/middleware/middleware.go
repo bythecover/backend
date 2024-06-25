@@ -43,21 +43,17 @@ func HandlerWithSession(store sessions.SessionStore) Middleware {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			var session *sessions.Session
 
-			log.Println("looking for session cookie")
 			cookie, err := r.Cookie(sessions.SESSION_COOKIE_NAME)
 
 			if err == nil {
-				log.Println("found session cookie")
 				sessionId := cookie.Value
 				session, err = store.Get(sessionId)
 
 				if err != nil {
-					log.Println("did not find session in store")
 					session = sessions.New()
 					addNewSessionToCookie(w, session)
 				}
 			} else {
-				log.Println("did not find session cookie")
 				session = sessions.New()
 				addNewSessionToCookie(w, session)
 			}
@@ -73,14 +69,45 @@ func HandlerWithSession(store sessions.SessionStore) Middleware {
 func addNewSessionToCookie(w http.ResponseWriter, session *sessions.Session) {
 	sessionId := session.Save().String()
 	sessionCookie := http.Cookie{
-		Name:     "sessionid",
-		Value:    sessionId,
-		Secure:   true,
-		HttpOnly: true,
-		MaxAge:   0,
+		Name:   "sessionid",
+		Path:   "/",
+		Value:  sessionId,
+		MaxAge: 0,
 	}
 
 	http.SetCookie(w, &sessionCookie)
+}
+
+func CreateAuthorizedHandler(requiredRoles []string) Middleware {
+	return func(next http.Handler) http.Handler {
+
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			session, err := sessions.WithSession(r.Context())
+
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				log.Println(err.Error())
+				return
+			}
+
+			if !contains(requiredRoles, session.Profile.Role) {
+				http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
+				return
+			}
+
+			next.ServeHTTP(w, r)
+		})
+	}
+
+}
+
+func contains(list []string, entry string) bool {
+	for _, a := range list {
+		if a == entry {
+			return true
+		}
+	}
+	return false
 }
 
 type Middleware func(http.Handler) http.Handler

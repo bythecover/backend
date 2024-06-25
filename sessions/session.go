@@ -22,6 +22,7 @@ type Auth0User struct {
 	Nickname string `json:"nickname"`
 	Picture  string `json:"picture"`
 	UserId   string `json:"sub"`
+	Role     string
 }
 
 // Creates a new Session

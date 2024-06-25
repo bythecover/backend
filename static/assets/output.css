@@ -622,6 +622,10 @@ video {
   margin-right: 0.75rem;
 }
 
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
 .mt-5 {
   margin-top: 1.25rem;
 }
@@ -636,6 +640,10 @@ video {
 
 .flex {
   display: flex;
+}
+
+.table {
+  display: table;
 }
 
 .grid {
@@ -680,6 +688,10 @@ video {
 
 .w-16 {
   width: 4rem;
+}
+
+.w-3\/4 {
+  width: 75%;
 }
 
 .w-4\/6 {
