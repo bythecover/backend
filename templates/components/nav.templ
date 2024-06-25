@@ -6,7 +6,7 @@ import "os"
 templ Nav(session *sessions.Session) {
 	<nav class="bg-white py-3 px-6 flex justify-between shadow-sm w-full items-center">
 		<div class="flex items-center gap-3">
-			<img class="max-w-10 h-auto mr-3" src={ os.Getenv("DOMAIN") + "http://localhost:8080/static/Logo.png" }/>
+			<img class="max-w-10 h-auto mr-3" src={ os.Getenv("DOMAIN") + "/static/Logo.png" }/>
 			<a>Home</a>
 			<a>About</a>
 		</div>
