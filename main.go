@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/bythecover/backend/authenticator"
 	"github.com/bythecover/backend/http/middleware"
@@ -16,8 +17,12 @@ import (
 )
 
 func main() {
-	if err := env.Update(".env"); err != nil {
-		log.Fatalln(err)
+	isProd := os.Getenv("ENVIRONMENT") == "PROD"
+
+	if !isProd {
+		if err := env.Update(".env"); err != nil {
+			log.Fatalln(err)
+		}
 	}
 
 	cld, err := cloudinary.New()

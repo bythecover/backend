@@ -9,7 +9,7 @@ import (
 )
 
 func NewPostgresDatabase() *sql.DB {
-	connStr := "postgres://" + os.Getenv("DB_USER") + ":" + os.Getenv("DB_PASS") + "@" + os.Getenv("DB_HOST") + ":5432/postgres?sslmode=" + os.Getenv("DB_SSL_MODE")
+	connStr := os.Getenv("DB_CONNECTION_STRING")
 	db, err := sql.Open("postgres", connStr)
 
 	if err != nil {
