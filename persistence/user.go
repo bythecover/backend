@@ -25,7 +25,7 @@ func NewUserPostgresRepository(db *sql.DB) userPostgresRepository {
 }
 
 func (repo userPostgresRepository) Save(u model.User) error {
-	stmt, err := repo.db.Prepare("INSERT INTO users (id, role) VALUES($1, $2)")
+	stmt, err := repo.db.Prepare("INSERT INTO users (id, user_role) VALUES($1, $2)")
 	defer stmt.Close()
 
 	if err != nil {
