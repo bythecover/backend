@@ -1,6 +1,7 @@
 package pages
 
 import "github.com/bythecover/backend/sessions"
+import "os"
 
 templ CreatePage(session *sessions.Session) {
 	@NewPage(session) {
@@ -16,5 +17,5 @@ templ CreatePage(session *sessions.Session) {
 			<button class="bg-green-500 hover:bg-green-600 active:bg-green-800 text-white font-bold p-3 rounded-lg text-center" type="submit">Submit</button>
 		</form>
 	}
-	<script src="http://localhost:8080/static/create.page.js"></script>
+	<script src={ os.Getenv("DOMAIN") + "/static/create.page.js" }></script>
 }

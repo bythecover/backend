@@ -2,12 +2,13 @@ package pages
 
 import "github.com/bythecover/backend/templates/components"
 import "github.com/bythecover/backend/sessions"
+import "os"
 
 templ NewPage(session *sessions.Session) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
-			<link href="http://localhost:8080/static/output.css" rel="stylesheet"/>
+			<link href={ os.Getenv("DOMAIN") + "/static/output.css" } rel="stylesheet"/>
 			<title>My Page</title>
 			<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 		</head>

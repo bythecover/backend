@@ -6,6 +6,7 @@ import (
 	"github.com/bythecover/backend/sessions"
 	"strconv"
 	"strings"
+	"os"
 )
 
 templ VotePage(poll model.Poll, session *sessions.Session) {
@@ -20,7 +21,7 @@ templ VotePage(poll model.Poll, session *sessions.Session) {
 			</form>
 		</div>
 	}
-	<script src="http://localhost:8080/static/vote.page.js"></script>
+	<script src={ os.Getenv("DOMAIN") + "/static/vote.page.js" }></script>
 }
 
 templ carouselCard(image string, name string, id string) {
