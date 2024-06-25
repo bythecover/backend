@@ -23,7 +23,7 @@ func NewLoginHttpAdapter(authenticator *authenticator.Authenticator, router *htt
 }
 
 func (adapter loginHttpAdapter) registerRoutes(router *http.ServeMux) {
-	router.HandleFunc("GET /test", adapter.loginHandler)
+	router.HandleFunc("GET /login", adapter.loginHandler)
 }
 
 func (adapter loginHttpAdapter) loginHandler(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +46,6 @@ func (adapter loginHttpAdapter) loginHandler(w http.ResponseWriter, r *http.Requ
 
 	session.State = state
 	session.Save()
-	log.Println(session.State)
 
 	http.Redirect(w, r, adapter.authenticator.AuthCodeURL(state), http.StatusTemporaryRedirect)
 }

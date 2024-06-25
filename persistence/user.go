@@ -15,7 +15,7 @@ type userPostgresRepository struct {
 type UserRepo interface {
 	Save(model.User) error
 	GetAll() ([]model.UserResp, error)
-	GetUser(int) (model.UserResp, error)
+	GetUser(string) (model.UserResp, error)
 }
 
 func NewUserPostgresRepository(db *sql.DB) userPostgresRepository {
@@ -25,21 +25,26 @@ func NewUserPostgresRepository(db *sql.DB) userPostgresRepository {
 }
 
 func (repo userPostgresRepository) Save(u model.User) error {
-	stmt, err := repo.db.Prepare("INSERT INTO users (id, first_name, last_name, email, is_author) VALUES($1, $2, $3, $4, $5)")
+	stmt, err := repo.db.Prepare("INSERT INTO users (id, role) VALUES($1, $2)")
+	defer stmt.Close()
 
 	if err != nil {
 		log.Print(err)
 		return err
 	}
 
-	defer stmt.Close()
-	stmt.Exec(u.Id, u.FirstName, u.LastName, u.Email, u.IsAuthor)
+	_, err = stmt.Exec(u.Id, u.Role)
 
-	return nil
+	if err != nil {
+		log.Print(err)
+		return err
+	}
+
+	return err
 }
 
 func (repo userPostgresRepository) GetAll() ([]model.UserResp, error) {
-	rows, err := repo.db.Query("SELECT id, first_name, last_name, email, is_author, created_at from users")
+	rows, err := repo.db.Query("SELECT id, first_name, last_name, email, user_role, created_at from users")
 
 	if err != nil {
 		log.Print(err)
@@ -50,7 +55,7 @@ func (repo userPostgresRepository) GetAll() ([]model.UserResp, error) {
 
 	for rows.Next() {
 		var person model.UserResp
-		rows.Scan(&person.Id, &person.FirstName, &person.LastName, &person.Email, &person.IsAuthor, &person.CreatedAt)
+		rows.Scan(&person.Id, &person.FirstName, &person.LastName, &person.Email, &person.Role, &person.CreatedAt)
 		people = append(people, person)
 	}
 
@@ -59,9 +64,9 @@ func (repo userPostgresRepository) GetAll() ([]model.UserResp, error) {
 	return people, nil
 }
 
-func (repo userPostgresRepository) GetUser(id int) (model.UserResp, error) {
+func (repo userPostgresRepository) GetUser(id string) (model.UserResp, error) {
 	var user model.UserResp
-	err := repo.db.QueryRow("SELECT id, first_name, last_name, email, is_author, created_at FROM users WHERE id = $1", id).Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.IsAuthor, &user.CreatedAt)
+	err := repo.db.QueryRow("SELECT id, user_role FROM users WHERE id = $1", id).Scan(&user.Id, &user.Role)
 
 	if err != nil {
 		log.Print(err)

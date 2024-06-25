@@ -1,7 +1,6 @@
 package routers
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -64,17 +63,22 @@ func (adapter callbackHttpAdapter) handler(w http.ResponseWriter, r *http.Reques
 	session.AccessToken = token.AccessToken
 	session.Save()
 
-	fmt.Printf("%+v\n", session.Profile)
+	existingUser, err := adapter.userService.GetUser(session.Profile.UserId)
+	if err != nil {
+		currentTime := time.Now()
+		adapter.userService.Create(model.UserResp{
+			Id:        session.Profile.UserId,
+			FirstName: session.Profile.Nickname,
+			LastName:  session.Profile.Name,
+			Email:     "dummy@email.com",
+			Role:      "user",
+			CreatedAt: &currentTime,
+		})
 
-	currentTime := time.Now()
-	adapter.userService.Create(model.UserResp{
-		Id:        session.Profile.UserId,
-		FirstName: session.Profile.Nickname,
-		LastName:  session.Profile.Name,
-		Email:     "dummy@email.com",
-		IsAuthor:  false,
-		CreatedAt: &currentTime,
-	})
+		session.Profile.Role = "user"
+	} else {
+		session.Profile.Role = existingUser.Role
+	}
 
 	// Redirect to logged in page.
 	http.Redirect(w, r, "/", http.StatusOK)

@@ -18,7 +18,7 @@ type UserResp struct {
 	FirstName string     `json:"first_name"`
 	LastName  string     `json:"last_name"`
 	Email     string     `json:"email"`
-	IsAuthor  bool       `json:"is_author"`
+	Role      string     `json:"role"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 }
 
@@ -32,17 +32,17 @@ type UserReq struct {
 type FirstName string
 type LastName string
 type Email string
-type IsAuthor bool
+type Role string
 
 type User struct {
 	Id        string
 	FirstName FirstName
 	LastName  LastName
 	Email     Email
-	IsAuthor  IsAuthor
+	Role      Role
 }
 
-func NewUser(Id string, firstName string, lastName string, email string, isAuthor bool) (User, error) {
+func NewUser(Id string, firstName string, lastName string, email string, role string) (User, error) {
 	if firstName == "" {
 		log.Print(ErrEmptyName)
 		return User{}, ErrEmptyName
@@ -63,6 +63,6 @@ func NewUser(Id string, firstName string, lastName string, email string, isAutho
 		FirstName(firstName),
 		LastName(lastName),
 		Email(email),
-		IsAuthor(isAuthor),
+		Role(role),
 	}, nil
 }

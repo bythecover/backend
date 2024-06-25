@@ -12,7 +12,7 @@ type userService struct {
 type UserService interface {
 	Create(model.UserResp) error
 	GetAll() ([]model.UserResp, error)
-	GetUser(int) (model.UserResp, error)
+	GetUser(string) (model.UserResp, error)
 }
 
 func NewUserService(userRepo persistence.UserRepo) userService {
@@ -22,7 +22,7 @@ func NewUserService(userRepo persistence.UserRepo) userService {
 }
 
 func (service userService) Create(input model.UserResp) error {
-	user, err := model.NewUser(input.Id, input.FirstName, input.LastName, input.Email, input.IsAuthor)
+	user, err := model.NewUser(input.Id, input.FirstName, input.LastName, input.Email, input.Role)
 
 	if err != nil {
 		return err
@@ -43,6 +43,6 @@ func (service userService) GetAll() ([]model.UserResp, error) {
 	return users, nil
 }
 
-func (service userService) GetUser(id int) (model.UserResp, error) {
+func (service userService) GetUser(id string) (model.UserResp, error) {
 	return service.userRepo.GetUser(id)
 }

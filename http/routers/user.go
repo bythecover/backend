@@ -3,8 +3,6 @@ package routers
 import (
 	"github.com/bythecover/backend/model"
 	"github.com/bythecover/backend/services"
-	"log"
-	"strconv"
 
 	"encoding/json"
 	"io"
@@ -52,12 +50,7 @@ func (adapter userHttpAdapter) createUser(w http.ResponseWriter, r *http.Request
 }
 
 func (adapter userHttpAdapter) getUser(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.PathValue("id"))
-
-	if err != nil {
-		log.Print(err)
-		w.WriteHeader(http.StatusInternalServerError)
-	}
+	id := r.PathValue("id")
 
 	user, err := adapter.userService.GetUser(id)
 

@@ -40,8 +40,8 @@ func main() {
 	pollRepo := persistence.NewPollPostgresRepository(dbConnection)
 	pollService := services.NewPollService(pollRepo, voteRepo)
 
-	//sessionHandler := middleware.HandlerWithSession(sessionStore)
-	middlewareStack := middleware.CreateStack(middleware.AllowCors, middleware.Logger)
+	sessionHandler := middleware.HandlerWithSession(sessionStore)
+	middlewareStack := middleware.CreateStack(sessionHandler, middleware.AllowCors, middleware.Logger)
 
 	authService, _ := authenticator.New()
 

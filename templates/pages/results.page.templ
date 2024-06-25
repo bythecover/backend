@@ -1,0 +1,30 @@
+package pages
+
+import (
+	"github.com/bythecover/backend/sessions"
+	"github.com/bythecover/backend/persistence"
+	"strconv"
+)
+
+templ Results(session *sessions.Session, results []persistence.Result) {
+	@NewPage(session) {
+		<div class="py-3 bg-white w-3/4 rounded-md mt-3 m-auto">
+			<table class="auto w-full">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Votes</th>
+					</tr>
+				</thead>
+				<tbody>
+					for _, item := range results {
+						<tr class="text-center">
+							<td>{ item.Name }</td>
+							<td>{ strconv.Itoa(item.Total) }</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	}
+}

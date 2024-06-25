@@ -9,6 +9,7 @@ import (
 
 type pollRepo interface {
 	GetById(int) (model.Poll, error)
+	CreatePoll(model.Poll) error
 }
 
 type PollService struct {
@@ -33,4 +34,12 @@ func (service PollService) SubmitVote(vote model.Vote) error {
 	}
 
 	return service.voteRepo.SubmitVote(vote)
+}
+
+func (service PollService) GetResults(pollId int) []persistence.Result {
+	return service.voteRepo.GetResults(pollId)
+}
+
+func (service PollService) CreatePoll(poll model.Poll) error {
+	return service.pollRepo.CreatePoll(poll)
 }
