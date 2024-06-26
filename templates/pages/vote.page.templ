@@ -26,7 +26,7 @@ templ VotePage(poll model.Poll, session *sessions.Session) {
 
 templ carouselCard(image string, name string, id string) {
 	<input name="selection" id={ hyphenateTitle(name) } value={ id } class="hidden" type="radio"/>
-	<label class="bg-gradient-to-r max-w-60 inline-block snap-center mx-3 scale-100" for={ hyphenateTitle(name) } data-carousel-card><img class="max-h-full" src={ "https://res.cloudinary.com/degz1nuus/image/upload/v1719283183/" + image }/></label>
+	<label class="bg-gradient-to-r max-w-60 inline-block snap-center mx-3 scale-100" for={ hyphenateTitle(name) } data-carousel-card><img class="max-h-full" src={ "https://res.cloudinary.com/degz1nuus/image/upload/w_1000/q_auto/f_auto/v1719283183/" + image }/></label>
 }
 
 func hyphenateTitle(title string) string {
