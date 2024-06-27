@@ -2,8 +2,9 @@ package persistence
 
 import (
 	"database/sql"
+
+	"github.com/bythecover/backend/logger"
 	"github.com/bythecover/backend/model"
-	"log"
 
 	_ "github.com/lib/pq"
 )
@@ -29,14 +30,14 @@ func (repo userPostgresRepository) Save(u model.User) error {
 	defer stmt.Close()
 
 	if err != nil {
-		log.Print(err)
+		logger.Error.Println(err)
 		return err
 	}
 
 	_, err = stmt.Exec(u.Id, u.Role)
 
 	if err != nil {
-		log.Print(err)
+		logger.Error.Println(err)
 		return err
 	}
 
@@ -47,7 +48,7 @@ func (repo userPostgresRepository) GetAll() ([]model.UserResp, error) {
 	rows, err := repo.db.Query("SELECT id, first_name, last_name, email, user_role, created_at from users")
 
 	if err != nil {
-		log.Print(err)
+		logger.Error.Println(err)
 		return nil, err
 	}
 
@@ -69,7 +70,7 @@ func (repo userPostgresRepository) GetUser(id string) (model.UserResp, error) {
 	err := repo.db.QueryRow("SELECT id, user_role FROM users WHERE id = $1", id).Scan(&user.Id, &user.Role)
 
 	if err != nil {
-		log.Print(err)
+		logger.Error.Println(err)
 		if err == sql.ErrNoRows {
 			return model.UserResp{}, model.ErrUserNotFound
 		}

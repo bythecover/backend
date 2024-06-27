@@ -3,10 +3,10 @@ package routers
 import (
 	"crypto/rand"
 	"encoding/base64"
-	"log"
 	"net/http"
 
 	"github.com/bythecover/backend/authenticator"
+	"github.com/bythecover/backend/logger"
 	"github.com/bythecover/backend/sessions"
 )
 
@@ -31,13 +31,12 @@ func (adapter loginHttpAdapter) loginHandler(w http.ResponseWriter, r *http.Requ
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Fatalln(err)
+		logger.Error.Println(err)
 		return
 	}
 
 	if session.State != "" {
-		log.Println("session already has state")
-		log.Println(session)
+		logger.Warn.Println("session already has state")
 		w.WriteHeader(http.StatusOK)
 		return
 	}

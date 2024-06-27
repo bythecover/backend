@@ -2,8 +2,8 @@ package sessions
 
 import (
 	"fmt"
-	"log"
 
+	"github.com/bythecover/backend/logger"
 	"github.com/google/uuid"
 )
 
@@ -23,7 +23,7 @@ func (store MemoryStore) Save(session *Session) uuid.UUID {
 
 func (store MemoryStore) Get(id string) (*Session, error) {
 	if store[id] == nil {
-		log.Println(fmt.Errorf("%w For id: %v", ErrSessionNotFound, id))
+		logger.Warn.Println(fmt.Errorf("%w For id: %v", ErrSessionNotFound, id))
 		return nil, ErrSessionNotFound
 	}
 	return store[id], nil
