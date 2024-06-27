@@ -2,9 +2,9 @@ package persistence
 
 import (
 	"database/sql"
-	"log"
 	"os"
 
+	"github.com/bythecover/backend/logger"
 	_ "github.com/lib/pq"
 )
 
@@ -13,7 +13,7 @@ func NewPostgresDatabase() *sql.DB {
 	db, err := sql.Open("postgres", connStr)
 
 	if err != nil {
-		log.Fatal(err)
+		logger.Error.Fatalln(err)
 	}
 
 	return db

@@ -2,11 +2,11 @@ package routers
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/bythecover/backend/http/middleware"
+	"github.com/bythecover/backend/logger"
 	"github.com/bythecover/backend/model"
 	"github.com/bythecover/backend/services"
 	"github.com/bythecover/backend/sessions"
@@ -67,7 +67,7 @@ func (adapter pollHttpAdapter) submitVote(w http.ResponseWriter, r *http.Request
 	dialog := components.Dialog(nil)
 
 	if err != nil {
-		log.Println("submitVote: ", err)
+		logger.Error.Println(err)
 		w.WriteHeader(http.StatusForbidden)
 		dialog = components.Dialog(err)
 		return
@@ -84,7 +84,7 @@ func (adapter pollHttpAdapter) getPollPage(w http.ResponseWriter, r *http.Reques
 	id, _ := strconv.Atoi(r.PathValue("id"))
 	poll, err := adapter.poll.GetById(id)
 	if err != nil {
-		log.Println(err)
+		logger.Error.Fatalln(err)
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
@@ -100,7 +100,7 @@ func (adapter pollHttpAdapter) createNewPoll(w http.ResponseWriter, r *http.Requ
 	session, err := sessions.WithSession(r.Context())
 
 	if err != nil {
-		log.Println(err.Error())
+		logger.Error.Println(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -108,7 +108,7 @@ func (adapter pollHttpAdapter) createNewPoll(w http.ResponseWriter, r *http.Requ
 	err = r.ParseMultipartForm(10 << 20)
 
 	if err != nil {
-		log.Println(err.Error())
+		logger.Error.Println(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -120,12 +120,10 @@ func (adapter pollHttpAdapter) createNewPoll(w http.ResponseWriter, r *http.Requ
 	fmt.Printf("%+v\n", values)
 
 	for _, item := range files {
-		log.Println(item.Filename)
 		res, _ := adapter.cloudinary.Upload.Upload(r.Context(), item, uploader.UploadParams{})
 		options = append(options, model.Option{
 			Image: res.PublicID,
 		})
-		log.Println(res.PublicID)
 	}
 
 	poll := model.Poll{
@@ -144,7 +142,7 @@ func (adapter pollHttpAdapter) getResultPage(w http.ResponseWriter, r *http.Requ
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Println(err.Error())
+		logger.Error.Println(err.Error())
 		return
 	}
 

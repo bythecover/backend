@@ -2,8 +2,9 @@ package persistence
 
 import (
 	"database/sql"
+
+	"github.com/bythecover/backend/logger"
 	"github.com/bythecover/backend/model"
-	"log"
 
 	_ "github.com/lib/pq"
 )
@@ -25,7 +26,7 @@ type VoteRepo interface {
 
 func NewVotePostgresRepository(db *sql.DB) votePostgresRepository {
 	if db == nil {
-		log.Fatalln("SQL Client was not passed to Vote Repo Constructor")
+		logger.Error.Fatalln("SQL Client was not passed to Vote Repo Constructor")
 	}
 
 	return votePostgresRepository{
@@ -38,11 +39,10 @@ func (repo votePostgresRepository) SubmitVote(submission model.Vote) error {
 	defer stmt.Close()
 
 	if err != nil {
-		log.Print("SubmitVote: ", err)
+		logger.Error.Println(err)
 		return err
 	}
 
-	log.Println(submission)
 	_, err2 := stmt.Exec(submission.Selection, submission.PollEventId, submission.Source, submission.UserId)
 
 	if err2 != nil {
@@ -57,7 +57,6 @@ func (repo votePostgresRepository) HasUserVoted(userId string, pollId int) bool 
 	err := repo.db.QueryRow("SELECT id FROM votes WHERE user_id = $1 AND poll_event_id = $2", userId, pollId).Scan(&foundId)
 
 	if err != nil {
-		log.Println("HasUserVoted: ", err)
 		return false
 	}
 
@@ -68,14 +67,14 @@ func (repo votePostgresRepository) GetResults(pollId int) []Result {
 	stmt, err := repo.db.Prepare("SELECT option.name, option.image, option.id, COUNT(*) as total_votes FROM votes INNER JOIN option ON option.id = votes.selection WHERE votes.poll_event_id = $1 GROUP BY option.id ORDER BY total_votes DESC;")
 
 	if err != nil {
-		log.Println(err.Error())
+		logger.Error.Println(err.Error())
 	}
 
 	var results []Result
 	rows, err := stmt.Query(pollId)
 
 	if err != nil {
-		log.Println(err.Error())
+		logger.Error.Println(err.Error())
 	}
 
 	for rows.Next() {
@@ -83,7 +82,7 @@ func (repo votePostgresRepository) GetResults(pollId int) []Result {
 		err := rows.Scan(&result.Name, &result.Image, &result.Id, &result.Total)
 
 		if err != nil {
-			log.Println(err.Error())
+			logger.Error.Println(err.Error())
 		}
 
 		results = append(results, result)

@@ -1,13 +1,13 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"os"
 
 	"github.com/bythecover/backend/authenticator"
 	"github.com/bythecover/backend/http/middleware"
 	"github.com/bythecover/backend/http/routers"
+	"github.com/bythecover/backend/logger"
 	"github.com/bythecover/backend/persistence"
 	"github.com/bythecover/backend/services"
 	"github.com/bythecover/backend/sessions"
@@ -21,13 +21,13 @@ func main() {
 
 	if !isProd {
 		if err := env.Update(".env"); err != nil {
-			log.Fatalln(err)
+			logger.Error.Fatalln(err)
 		}
 	}
 
 	cld, err := cloudinary.New()
 	if err != nil {
-		log.Fatalln("Unable to instantiate cloudinary: ", err.Error())
+		logger.Error.Fatalln("Unable to instantiate cloudinary: ", err.Error())
 	}
 
 	router := http.NewServeMux()
@@ -61,5 +61,5 @@ func main() {
 		Addr:    ":8080",
 	}
 
-	log.Fatal(server.ListenAndServe())
+	logger.Error.Fatal(server.ListenAndServe())
 }

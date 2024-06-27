@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"log"
 	"net/http"
 
+	"github.com/bythecover/backend/logger"
 	"github.com/bythecover/backend/sessions"
 )
 
@@ -32,7 +32,7 @@ func Logger(next http.Handler) http.Handler {
 			http.StatusOK,
 		}
 		next.ServeHTTP(writer, r)
-		log.Println(writer.statusCode, r.Method, r.URL.Path)
+		logger.Info.Println(writer.statusCode, r.Method, r.URL.Path)
 	})
 }
 
@@ -86,7 +86,7 @@ func CreateAuthorizedHandler(requiredRoles []string) Middleware {
 
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
-				log.Println(err.Error())
+				logger.Error.Println(err.Error())
 				return
 			}
 
