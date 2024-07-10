@@ -11,7 +11,12 @@ templ Nav(session *sessions.Session) {
 			<a>About</a>
 		</div>
 		if session != nil {
-			<p class="right-5">{ session.Profile.Name }</p>
+			<div class="right-5 flex gap-5">
+				if session.Profile.Role == "author" {
+					<a href={ templ.URL("/" + session.Profile.UserId) }>My Polls</a>
+				}
+				<p>{ session.Profile.Name }</p>
+			</div>
 		}
 	</nav>
 }

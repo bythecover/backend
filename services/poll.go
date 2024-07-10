@@ -10,6 +10,8 @@ import (
 type pollRepo interface {
 	GetById(int) (model.Poll, error)
 	CreatePoll(model.Poll) error
+	GetCreatedBy(string) ([]model.Poll, error)
+	ExpirePoll(int) error
 }
 
 type PollService struct {
@@ -42,4 +44,12 @@ func (service PollService) GetResults(pollId int) []persistence.Result {
 
 func (service PollService) CreatePoll(poll model.Poll) error {
 	return service.pollRepo.CreatePoll(poll)
+}
+
+func (service PollService) GetCreatedBy(userId string) ([]model.Poll, error) {
+	return service.pollRepo.GetCreatedBy(userId)
+}
+
+func (service PollService) ExpirePoll(pollId int) error {
+	return service.pollRepo.ExpirePoll(pollId)
 }

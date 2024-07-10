@@ -1,0 +1,32 @@
+package pages
+
+import "github.com/bythecover/backend/sessions"
+import "github.com/bythecover/backend/model"
+import "strconv"
+
+templ AuthorPage(session *sessions.Session, polls []model.Poll) {
+	@NewPage(session) {
+		<div class="py-3 bg-white max-w-5xl rounded-md mt-3 m-auto">
+			<table class="auto w-full text-center divide-y">
+				<thead>
+					<tr>
+						<th>Title</th>
+						<th>Expired</th>
+					</tr>
+				</thead>
+				<tbody class="divide-y">
+					for _, poll := range polls {
+						<tr>
+							<td>{ poll.Title }</td>
+							if poll.Expired {
+								<td><a type="button" class="bg-green-500 px-3 text-white font-bold rounded-md" href={ templ.SafeURL("/polls/admin/" + strconv.Itoa(poll.Id)) }>Results</a></td>
+							} else {
+								<td><button type="button" class="bg-red-500 px-3 py-2 text-white font-bold rounded-md" hx-post={ session.Profile.UserId } name="pollId" value={ strconv.Itoa(poll.Id) } hx-swap="none">Finalize</button></td>
+							}
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	}
+}
