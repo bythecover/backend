@@ -714,6 +714,10 @@ video {
   max-width: 2.5rem;
 }
 
+.max-w-5xl {
+  max-width: 64rem;
+}
+
 .max-w-60 {
   max-width: 15rem;
 }
@@ -783,6 +787,16 @@ video {
 
 .gap-3 {
   gap: 0.75rem;
+}
+
+.gap-5 {
+  gap: 1.25rem;
+}
+
+.divide-y > :not([hidden]) ~ :not([hidden]) {
+  --tw-divide-y-reverse: 0;
+  border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
+  border-bottom-width: calc(1px * var(--tw-divide-y-reverse));
 }
 
 .overflow-y-visible {
@@ -861,6 +875,11 @@ video {
 
 .p-\[15px\] {
   padding: 15px;
+}
+
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
 }
 
 .px-5 {

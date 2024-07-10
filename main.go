@@ -50,6 +50,7 @@ func main() {
 
 	authService, _ := authenticator.New()
 
+	routers.NewAuthorHttpAdapter(router, pollService)
 	routers.NewLoginHttpAdapter(authService, router)
 	routers.NewCallbackHttpAdapter(authService, userService, router)
 	routers.NewPollHttpAdapter(pollService, cld, router)

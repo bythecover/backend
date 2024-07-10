@@ -35,7 +35,7 @@ func NewPollHttpAdapter(poll services.PollService, cloudinary *cloudinary.Cloudi
 func (adapter pollHttpAdapter) registerRoutes(router *http.ServeMux) {
 
 	isAuthorizedAsAuthorOrUser := middleware.CreateAuthorizedHandler([]string{"author", "user"})
-	router.Handle("GET /polls/{id}", http.HandlerFunc(adapter.getPollPage))
+	router.Handle("GET /polls/{id}", isAuthorizedAsAuthorOrUser(http.HandlerFunc(adapter.getPollPage)))
 	router.Handle("POST /polls/{id}", isAuthorizedAsAuthorOrUser(http.HandlerFunc(adapter.submitVote)))
 
 	isAuthorizedAsAuthor := middleware.CreateAuthorizedHandler([]string{"author"})

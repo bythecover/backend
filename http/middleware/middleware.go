@@ -69,10 +69,11 @@ func HandlerWithSession(store sessions.SessionStore) Middleware {
 func addNewSessionToCookie(w http.ResponseWriter, session *sessions.Session) {
 	sessionId := session.Save().String()
 	sessionCookie := http.Cookie{
-		Name:   "sessionid",
-		Path:   "/",
-		Value:  sessionId,
-		MaxAge: 0,
+		Name:     "sessionid",
+		Path:     "/",
+		HttpOnly: true,
+		Value:    sessionId,
+		MaxAge:   0,
 	}
 
 	http.SetCookie(w, &sessionCookie)
@@ -99,6 +100,10 @@ func CreateAuthorizedHandler(requiredRoles []string) Middleware {
 		})
 	}
 
+}
+
+func IsAuthorizedAsAuthor() Middleware {
+	return CreateAuthorizedHandler([]string{"author"})
 }
 
 func contains(list []string, entry string) bool {
