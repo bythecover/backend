@@ -34,7 +34,7 @@ func main() {
 
 	dbConnection := persistence.NewPostgresDatabase()
 
-	sessionStore := make(sessions.MemoryStore)
+	sessionStore := sessions.MemoryStore{}
 	sessions.CreateStore(sessionStore)
 
 	userRepo := persistence.NewUserPostgresRepository(dbConnection)
