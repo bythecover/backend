@@ -1,7 +1,7 @@
 # ignore all files ending in _templ.go
 **/*_templ.go
-./main
+main
 .env
-./backend
+backend
 tmp/
-./tmp
+tmp
