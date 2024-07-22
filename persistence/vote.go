@@ -64,7 +64,7 @@ func (repo votePostgresRepository) HasUserVoted(userId string, pollId int) bool 
 }
 
 func (repo votePostgresRepository) GetResults(pollId int) []Result {
-	stmt, err := repo.db.Prepare("SELECT option.name, option.image, option.id, COUNT(*) as total_votes FROM votes INNER JOIN option ON option.id = votes.selection WHERE votes.poll_event_id = $1 GROUP BY option.id ORDER BY total_votes DESC;")
+	stmt, err := repo.db.Prepare("SELECT option.name, option.image, option.id, COUNT(votes.id) as total_votes FROM option LEFT JOIN votes ON option.id = votes.selection WHERE option.poll_event_id = $1 GROUP BY option.id ORDER BY total_votes DESC;")
 
 	if err != nil {
 		logger.Error.Println(err.Error())
