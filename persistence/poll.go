@@ -65,13 +65,13 @@ func (repo pollPostgresRepository) CreatePoll(poll model.Poll) error {
 	rows.Scan(&pollId)
 
 	for _, item := range poll.Options {
-		stmt, err := repo.db.Prepare("INSERT INTO option (poll_event_id, name, image) VALUES ($1, 'dummy_name', $2)")
+		stmt, err := repo.db.Prepare("INSERT INTO option (poll_event_id, name, image) VALUES ($1, $2, $3)")
 
 		if err != nil {
 			return err
 		}
 
-		_, err = stmt.Exec(pollId, item.Image)
+		_, err = stmt.Exec(pollId, item.Name, item.Image)
 
 		if err != nil {
 			return err

@@ -1,7 +1,9 @@
 package pages
 
-import "github.com/bythecover/backend/sessions"
-import "os"
+import (
+	"github.com/bythecover/backend/sessions"
+	"os"
+)
 
 templ CreatePage(session *sessions.Session) {
 	@NewPage(session) {
@@ -10,6 +12,8 @@ templ CreatePage(session *sessions.Session) {
 			<button class="bg-green-500 hover:bg-green-600 active:bg-green-800 text-white font-bold rounded-lg text-center p-3" data-add-config onclick="addOption()" type="button">Add Another Cover</button>
 			<div class="my-3">
 				<div data-option-config class="text-center my-2">
+					<label for="name">Cover name:</label>
+					<input class="border-gray-400 border-solid border-2 rounded-sm" type="text" id="name" name="name" required/>
 					<input name="image" type="file" accept="image/*" required/>
 					<button class="bg-red-500 hover:bg-red-600 active:bg-red-800 text-white font-bold py-1 px-5 rounded-lg" type="button" onclick="removeOption(this)">remove</button>
 				</div>

@@ -1,7 +1,6 @@
 package routers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -38,6 +37,7 @@ func (adapter pollHttpAdapter) registerRoutes(router *http.ServeMux) {
 	router.Handle("GET /polls/{id}", isAuthorizedAsAuthorOrUser(http.HandlerFunc(adapter.getPollPage)))
 	router.Handle("POST /polls/{id}", isAuthorizedAsAuthorOrUser(http.HandlerFunc(adapter.submitVote)))
 
+	// TODO: add author check back in
 	isAuthorizedAsAuthor := middleware.CreateAuthorizedHandler([]string{"author"})
 	router.Handle("GET /polls/admin/{id}", isAuthorizedAsAuthor(http.HandlerFunc(adapter.getResultPage)))
 	router.Handle("GET /polls/admin", isAuthorizedAsAuthor(http.HandlerFunc(adapter.getCreatePollPage)))
@@ -105,7 +105,7 @@ func (adapter pollHttpAdapter) createNewPoll(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	err = r.ParseMultipartForm(10 << 20)
+	err = r.ParseMultipartForm(1 << 20)
 
 	if err != nil {
 		logger.Error.Println(err.Error())
@@ -117,12 +117,11 @@ func (adapter pollHttpAdapter) createNewPoll(w http.ResponseWriter, r *http.Requ
 	values := r.MultipartForm.Value
 	options := []model.Option{}
 
-	fmt.Printf("%+v\n", values)
-
-	for _, item := range files {
+	for i, item := range files {
 		res, _ := adapter.cloudinary.Upload.Upload(r.Context(), item, uploader.UploadParams{})
 		options = append(options, model.Option{
 			Image: res.PublicID,
+			Name:  values["name"][i],
 		})
 	}
 
