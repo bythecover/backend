@@ -20,15 +20,15 @@ func NewPollPostgresRepository(db *sql.DB) pollPostgresRepository {
 }
 
 // Gets a poll by its id
-func (repo pollPostgresRepository) GetById(id int) (model.Poll, error) {
+func (repo pollPostgresRepository) GetById(bookId int, authorName string) (model.Poll, error) {
 	var poll model.Poll
-	err := repo.db.QueryRow("SELECT id, title, created_by, expired FROM poll_events WHERE id = $1", id).Scan(&poll.Id, &poll.Title, &poll.CreatedBy, &poll.Expired)
+	err := repo.db.QueryRow("SELECT id, title, created_by, expired FROM poll_events WHERE id = $1 AND created_by = $2", bookId, authorName).Scan(&poll.Id, &poll.Title, &poll.CreatedBy, &poll.Expired)
 
 	if err != nil {
 		return model.Poll{}, err
 	}
 
-	rows, err := repo.db.Query("SELECT name, image, id FROM option WHERE poll_event_id = $1", id)
+	rows, err := repo.db.Query("SELECT name, image, id FROM option WHERE poll_event_id = $1", bookId)
 
 	if err != nil {
 		return model.Poll{}, err

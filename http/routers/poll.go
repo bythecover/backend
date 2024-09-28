@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
@@ -34,10 +35,9 @@ func NewPollHttpAdapter(poll services.PollService, cloudinary *cloudinary.Cloudi
 func (adapter pollHttpAdapter) registerRoutes(router *http.ServeMux) {
 
 	isAuthorizedAsAuthorOrUser := middleware.CreateAuthorizedHandler([]string{"author", "user"})
-	router.Handle("GET /polls/{id}", isAuthorizedAsAuthorOrUser(http.HandlerFunc(adapter.getPollPage)))
+	router.Handle("GET /a/{authorName}/{bookid}", isAuthorizedAsAuthorOrUser(http.HandlerFunc(adapter.getPollPage)))
 	router.Handle("POST /polls/{id}", isAuthorizedAsAuthorOrUser(http.HandlerFunc(adapter.submitVote)))
 
-	// TODO: add author check back in
 	isAuthorizedAsAuthor := middleware.CreateAuthorizedHandler([]string{"author"})
 	router.Handle("GET /polls/admin/{id}", isAuthorizedAsAuthor(http.HandlerFunc(adapter.getResultPage)))
 	router.Handle("GET /polls/admin", isAuthorizedAsAuthor(http.HandlerFunc(adapter.getCreatePollPage)))
@@ -79,15 +79,21 @@ func (adapter pollHttpAdapter) submitVote(w http.ResponseWriter, r *http.Request
 }
 
 func (adapter pollHttpAdapter) getPollPage(w http.ResponseWriter, r *http.Request) {
-	session, _ := sessions.WithSession(r.Context())
+	session, err := sessions.WithSession(r.Context())
 	// convert string to number
-	id, _ := strconv.Atoi(r.PathValue("id"))
-	poll, err := adapter.poll.GetById(id)
+	authorId := r.PathValue("authorName")
+	bookId, err := strconv.Atoi(r.PathValue("bookid"))
+
+	log.Println(authorId)
+
+	poll, err := adapter.poll.GetByIdAndAuthorName(bookId, authorId)
+
 	if err != nil {
 		logger.Error.Fatalln(err)
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
+
 	templ.Handler(pages.VotePage(poll, session)).ServeHTTP(w, r)
 }
 
