@@ -1,8 +1,10 @@
 package pages
 
-import "github.com/bythecover/backend/sessions"
-import "github.com/bythecover/backend/model"
-import "strconv"
+import (
+	"github.com/bythecover/backend/model"
+	"github.com/bythecover/backend/sessions"
+	"strconv"
+)
 
 templ AuthorPage(session *sessions.Session, polls []model.Poll) {
 	@NewPage(session) {
@@ -19,9 +21,9 @@ templ AuthorPage(session *sessions.Session, polls []model.Poll) {
 						<tr>
 							<td>{ poll.Title }</td>
 							if poll.Expired {
-								<td><a type="button" class="bg-green-500 px-3 text-white font-bold rounded-md" href={ templ.SafeURL("/polls/admin/" + strconv.Itoa(poll.Id)) }>Results</a></td>
+								<td><a type="button" class="bg-green-500 px-3 text-white font-bold rounded-md" href={ templ.SafeURL("/a/" + session.Profile.UserId + "/" + strconv.Itoa(poll.Id)) }>Results</a></td>
 							} else {
-								<td><button type="button" class="bg-red-500 px-3 py-2 text-white font-bold rounded-md" hx-post={ session.Profile.UserId } name="pollId" value={ strconv.Itoa(poll.Id) } hx-swap="none">Finalize</button></td>
+								<td><button type="button" class="bg-red-500 px-3 py-2 text-white font-bold rounded-md" hx-put={ session.Profile.UserId + "/" + strconv.Itoa(poll.Id) } name="pollId" hx-swap="none">Finalize</button></td>
 							}
 						</tr>
 					}

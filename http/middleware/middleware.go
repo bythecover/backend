@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/bythecover/backend/logger"
 	"github.com/bythecover/backend/sessions"
@@ -42,6 +43,17 @@ func HandlerWithSession(store sessions.SessionStore) Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			var session *sessions.Session
+
+			if os.Getenv("OVERRIDE_AUTH") == "true" {
+				session = &sessions.Session{}
+				session.Profile.Name = "Developer"
+				session.Profile.Role = "author"
+				session.Profile.Nickname = "Dev"
+				session.Profile.UserId = "developer"
+				newContext := sessions.NewContext(r.Context(), session)
+				next.ServeHTTP(w, r.WithContext(newContext))
+				return
+			}
 
 			cookie, err := r.Cookie(sessions.SESSION_COOKIE_NAME)
 

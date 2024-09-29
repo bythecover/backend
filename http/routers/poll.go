@@ -36,12 +36,11 @@ func (adapter pollHttpAdapter) registerRoutes(router *http.ServeMux) {
 
 	isAuthorizedAsAuthorOrUser := middleware.CreateAuthorizedHandler([]string{"author", "user"})
 	router.Handle("GET /a/{authorName}/{bookid}", isAuthorizedAsAuthorOrUser(http.HandlerFunc(adapter.getPollPage)))
-	router.Handle("POST /polls/{id}", isAuthorizedAsAuthorOrUser(http.HandlerFunc(adapter.submitVote)))
+	router.Handle("POST /a/{authorName}/{bookid}", isAuthorizedAsAuthorOrUser(http.HandlerFunc(adapter.submitVote)))
 
 	isAuthorizedAsAuthor := middleware.CreateAuthorizedHandler([]string{"author"})
-	router.Handle("GET /polls/admin/{id}", isAuthorizedAsAuthor(http.HandlerFunc(adapter.getResultPage)))
-	router.Handle("GET /polls/admin", isAuthorizedAsAuthor(http.HandlerFunc(adapter.getCreatePollPage)))
-	router.Handle("POST /polls/admin", isAuthorizedAsAuthor(http.HandlerFunc(adapter.createNewPoll)))
+	router.Handle("GET /a/{authorName}/create", isAuthorizedAsAuthor(http.HandlerFunc(adapter.getCreatePollPage)))
+	router.Handle("POST /a/{authorName}", isAuthorizedAsAuthor(http.HandlerFunc(adapter.createNewPoll)))
 }
 
 func (adapter pollHttpAdapter) submitVote(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +53,7 @@ func (adapter pollHttpAdapter) submitVote(w http.ResponseWriter, r *http.Request
 
 	r.ParseForm()
 	selectedId, _ := strconv.Atoi(r.PostFormValue("selection"))
-	pollId, _ := strconv.Atoi(r.PathValue("id"))
+	pollId, _ := strconv.Atoi(r.PathValue("bookid"))
 
 	submission := model.Vote{
 		Selection:   selectedId,
@@ -80,8 +79,14 @@ func (adapter pollHttpAdapter) submitVote(w http.ResponseWriter, r *http.Request
 
 func (adapter pollHttpAdapter) getPollPage(w http.ResponseWriter, r *http.Request) {
 	session, err := sessions.WithSession(r.Context())
-	// convert string to number
 	authorId := r.PathValue("authorName")
+
+	if session.Profile.UserId == authorId {
+		adapter.getResultPage(w, r)
+		return
+	}
+
+	// convert string to number
 	bookId, err := strconv.Atoi(r.PathValue("bookid"))
 
 	log.Println(authorId)
@@ -136,7 +141,10 @@ func (adapter pollHttpAdapter) createNewPoll(w http.ResponseWriter, r *http.Requ
 		Title:     values["title"][0],
 		Options:   options,
 	}
-	adapter.poll.CreatePoll(poll)
+
+	if err = adapter.poll.CreatePoll(poll); err != nil {
+		logger.Error.Println(err)
+	}
 
 	w.Header().Add("Content-Type", "text/plain")
 	w.Write([]byte("<p>Success</p>"))
@@ -151,7 +159,7 @@ func (adapter pollHttpAdapter) getResultPage(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	pollId, _ := strconv.Atoi(r.PathValue("id"))
+	pollId, _ := strconv.Atoi(r.PathValue("bookid"))
 	results := adapter.poll.GetResults(pollId)
 
 	pages.Results(session, results).Render(r.Context(), w)

@@ -42,10 +42,7 @@ func (adapter loginHttpAdapter) loginHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 	state, _ := generateRandomState()
-
 	session.State = state
-	session.Save()
-
 	http.Redirect(w, r, adapter.authenticator.AuthCodeURL(state), http.StatusTemporaryRedirect)
 }
 

@@ -2,18 +2,18 @@ package pages
 
 import (
 	"github.com/bythecover/backend/model"
-	"github.com/bythecover/backend/templates/components"
 	"github.com/bythecover/backend/sessions"
+	"github.com/bythecover/backend/templates/components"
+	"os"
 	"strconv"
 	"strings"
-	"os"
 )
 
 templ VotePage(poll model.Poll, session *sessions.Session) {
 	@NewPage(session) {
 		<div class="relative top-1/2 translate-y-[-50%]">
 			<h1 class="text-center font-bold text-3xl">{ poll.Title }</h1>
-			<form hx-post={ "/polls/" + strconv.Itoa(poll.Id) } hx-target="body" hx-swap="afterbegin">
+			<form hx-post={ "/a/" + poll.CreatedBy + "/" + strconv.Itoa(poll.Id) } hx-target="body" hx-swap="afterbegin">
 				@components.Carousel(generateCards(poll.Options))
 				<div class="text-center">
 					<button class="text-center m-auto bg-green-500 rounded-md px-6 py-2 text-white font-bold">Submit</button>
