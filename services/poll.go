@@ -8,7 +8,7 @@ import (
 )
 
 type pollRepo interface {
-	GetById(int) (model.Poll, error)
+	GetById(int, string) (model.Poll, error)
 	CreatePoll(model.Poll) error
 	GetCreatedBy(string) ([]model.Poll, error)
 	ExpirePoll(int) error
@@ -26,8 +26,8 @@ func NewPollService(pollRepo pollRepo, voteRepo persistence.VoteRepo) PollServic
 	}
 }
 
-func (service PollService) GetById(id int) (model.Poll, error) {
-	return service.pollRepo.GetById(id)
+func (service PollService) GetByIdAndAuthorName(bookId int, authorName string) (model.Poll, error) {
+	return service.pollRepo.GetById(bookId, authorName)
 }
 
 func (service PollService) SubmitVote(vote model.Vote) error {

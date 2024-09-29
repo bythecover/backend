@@ -23,8 +23,8 @@ func NewAuthorHttpAdapter(router *http.ServeMux, pollService services.PollServic
 
 func (adapter *authorHttpAdapter) registerRoutes(router *http.ServeMux) {
 	isAuthorized := middleware.IsAuthorizedAsAuthor()
-	router.Handle("GET /{author_name}", isAuthorized(http.HandlerFunc(adapter.getAuthorPage)))
-	router.Handle("POST /{author_name}", isAuthorized(http.HandlerFunc(adapter.finalizePoll)))
+	router.Handle("GET /a/{authorName}", isAuthorized(http.HandlerFunc(adapter.getAuthorPage)))
+	router.Handle("PUT /a/{authorName}/{bookId}", isAuthorized(http.HandlerFunc(adapter.finalizePoll)))
 }
 
 func (adapter *authorHttpAdapter) getAuthorPage(w http.ResponseWriter, r *http.Request) {
@@ -36,7 +36,7 @@ func (adapter *authorHttpAdapter) getAuthorPage(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	authorId := r.PathValue("author_name")
+	authorId := r.PathValue("authorName")
 
 	if authorId != session.Profile.UserId {
 		w.WriteHeader(http.StatusForbidden)
@@ -53,8 +53,7 @@ func (adapter *authorHttpAdapter) getAuthorPage(w http.ResponseWriter, r *http.R
 }
 
 func (adapter *authorHttpAdapter) finalizePoll(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	pollId, err := strconv.Atoi(r.Form["pollId"][0])
+	pollId, err := strconv.Atoi(r.PathValue("bookId"))
 
 	if err != nil {
 		logger.Error.Println(err)
@@ -62,6 +61,7 @@ func (adapter *authorHttpAdapter) finalizePoll(w http.ResponseWriter, r *http.Re
 		return
 	}
 
+	// TODO: Check to see if author has permissions to expire this poll
 	adapter.pollService.ExpirePoll(pollId)
 
 	w.WriteHeader(http.StatusOK)

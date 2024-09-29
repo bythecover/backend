@@ -1,7 +1,9 @@
 package components
 
-import "github.com/bythecover/backend/sessions"
-import "os"
+import (
+	"github.com/bythecover/backend/sessions"
+	"os"
+)
 
 templ Nav(session *sessions.Session) {
 	<nav class="bg-white py-3 px-6 flex justify-between shadow-sm w-full items-center">
@@ -13,7 +15,7 @@ templ Nav(session *sessions.Session) {
 		if session != nil {
 			<div class="right-5 flex gap-5">
 				if session.Profile.Role == "author" {
-					<a href={ templ.URL("/" + session.Profile.UserId) }>My Polls</a>
+					<a href={ templ.URL("/a/" + session.Profile.UserId) }>My Polls</a>
 				}
 				<p>{ session.Profile.Name }</p>
 			</div>

@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -35,13 +35,12 @@ func NewPollHttpAdapter(poll services.PollService, cloudinary *cloudinary.Cloudi
 func (adapter pollHttpAdapter) registerRoutes(router *http.ServeMux) {
 
 	isAuthorizedAsAuthorOrUser := middleware.CreateAuthorizedHandler([]string{"author", "user"})
-	router.Handle("GET /polls/{id}", isAuthorizedAsAuthorOrUser(http.HandlerFunc(adapter.getPollPage)))
-	router.Handle("POST /polls/{id}", isAuthorizedAsAuthorOrUser(http.HandlerFunc(adapter.submitVote)))
+	router.Handle("GET /a/{authorName}/{bookid}", isAuthorizedAsAuthorOrUser(http.HandlerFunc(adapter.getPollPage)))
+	router.Handle("POST /a/{authorName}/{bookid}", isAuthorizedAsAuthorOrUser(http.HandlerFunc(adapter.submitVote)))
 
 	isAuthorizedAsAuthor := middleware.CreateAuthorizedHandler([]string{"author"})
-	router.Handle("GET /polls/admin/{id}", isAuthorizedAsAuthor(http.HandlerFunc(adapter.getResultPage)))
-	router.Handle("GET /polls/admin", isAuthorizedAsAuthor(http.HandlerFunc(adapter.getCreatePollPage)))
-	router.Handle("POST /polls/admin", isAuthorizedAsAuthor(http.HandlerFunc(adapter.createNewPoll)))
+	router.Handle("GET /a/{authorName}/create", isAuthorizedAsAuthor(http.HandlerFunc(adapter.getCreatePollPage)))
+	router.Handle("POST /a/{authorName}", isAuthorizedAsAuthor(http.HandlerFunc(adapter.createNewPoll)))
 }
 
 func (adapter pollHttpAdapter) submitVote(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +53,7 @@ func (adapter pollHttpAdapter) submitVote(w http.ResponseWriter, r *http.Request
 
 	r.ParseForm()
 	selectedId, _ := strconv.Atoi(r.PostFormValue("selection"))
-	pollId, _ := strconv.Atoi(r.PathValue("id"))
+	pollId, _ := strconv.Atoi(r.PathValue("bookid"))
 
 	submission := model.Vote{
 		Selection:   selectedId,
@@ -79,15 +78,27 @@ func (adapter pollHttpAdapter) submitVote(w http.ResponseWriter, r *http.Request
 }
 
 func (adapter pollHttpAdapter) getPollPage(w http.ResponseWriter, r *http.Request) {
-	session, _ := sessions.WithSession(r.Context())
+	session, err := sessions.WithSession(r.Context())
+	authorId := r.PathValue("authorName")
+
+	if session.Profile.UserId == authorId {
+		adapter.getResultPage(w, r)
+		return
+	}
+
 	// convert string to number
-	id, _ := strconv.Atoi(r.PathValue("id"))
-	poll, err := adapter.poll.GetById(id)
+	bookId, err := strconv.Atoi(r.PathValue("bookid"))
+
+	log.Println(authorId)
+
+	poll, err := adapter.poll.GetByIdAndAuthorName(bookId, authorId)
+
 	if err != nil {
 		logger.Error.Fatalln(err)
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
+
 	templ.Handler(pages.VotePage(poll, session)).ServeHTTP(w, r)
 }
 
@@ -105,7 +116,7 @@ func (adapter pollHttpAdapter) createNewPoll(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	err = r.ParseMultipartForm(10 << 20)
+	err = r.ParseMultipartForm(1 << 20)
 
 	if err != nil {
 		logger.Error.Println(err.Error())
@@ -117,12 +128,11 @@ func (adapter pollHttpAdapter) createNewPoll(w http.ResponseWriter, r *http.Requ
 	values := r.MultipartForm.Value
 	options := []model.Option{}
 
-	fmt.Printf("%+v\n", values)
-
-	for _, item := range files {
+	for i, item := range files {
 		res, _ := adapter.cloudinary.Upload.Upload(r.Context(), item, uploader.UploadParams{})
 		options = append(options, model.Option{
 			Image: res.PublicID,
+			Name:  values["name"][i],
 		})
 	}
 
@@ -131,7 +141,10 @@ func (adapter pollHttpAdapter) createNewPoll(w http.ResponseWriter, r *http.Requ
 		Title:     values["title"][0],
 		Options:   options,
 	}
-	adapter.poll.CreatePoll(poll)
+
+	if err = adapter.poll.CreatePoll(poll); err != nil {
+		logger.Error.Println(err)
+	}
 
 	w.Header().Add("Content-Type", "text/plain")
 	w.Write([]byte("<p>Success</p>"))
@@ -146,7 +159,7 @@ func (adapter pollHttpAdapter) getResultPage(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	pollId, _ := strconv.Atoi(r.PathValue("id"))
+	pollId, _ := strconv.Atoi(r.PathValue("bookid"))
 	results := adapter.poll.GetResults(pollId)
 
 	pages.Results(session, results).Render(r.Context(), w)
