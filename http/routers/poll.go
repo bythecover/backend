@@ -8,7 +8,6 @@ import (
 	"github.com/bythecover/backend/http/middleware"
 	"github.com/bythecover/backend/logger"
 	"github.com/bythecover/backend/model"
-	"github.com/bythecover/backend/services"
 	"github.com/bythecover/backend/sessions"
 	"github.com/bythecover/backend/templates/components"
 	"github.com/bythecover/backend/templates/pages"
@@ -19,13 +18,15 @@ import (
 )
 
 type pollHttpAdapter struct {
-	poll       services.PollService
+	pollRepo   model.PollRepo
+	voteRepo   model.VoteRepo
 	cloudinary *cloudinary.Cloudinary
 }
 
-func NewPollHttpAdapter(poll services.PollService, cloudinary *cloudinary.Cloudinary, router *http.ServeMux) pollHttpAdapter {
+func NewPollHttpAdapter(pollRepo model.PollRepo, voteRepo model.VoteRepo, cloudinary *cloudinary.Cloudinary, router *http.ServeMux) pollHttpAdapter {
 	adapter := pollHttpAdapter{
-		poll,
+		pollRepo,
+		voteRepo,
 		cloudinary,
 	}
 	adapter.registerRoutes(router)
@@ -62,7 +63,7 @@ func (adapter pollHttpAdapter) submitVote(w http.ResponseWriter, r *http.Request
 		Source:      "web",
 	}
 
-	err = adapter.poll.SubmitVote(submission)
+	err = adapter.voteRepo.SubmitVote(submission)
 	dialog := components.Dialog(nil)
 
 	if err != nil {
@@ -91,7 +92,7 @@ func (adapter pollHttpAdapter) getPollPage(w http.ResponseWriter, r *http.Reques
 
 	log.Println(authorId)
 
-	poll, err := adapter.poll.GetByIdAndAuthorName(bookId, authorId)
+	poll, err := adapter.pollRepo.GetById(bookId, authorId)
 
 	if err != nil {
 		logger.Error.Fatalln(err)
@@ -142,7 +143,7 @@ func (adapter pollHttpAdapter) createNewPoll(w http.ResponseWriter, r *http.Requ
 		Options:   options,
 	}
 
-	if err = adapter.poll.CreatePoll(poll); err != nil {
+	if err = adapter.pollRepo.CreatePoll(poll); err != nil {
 		logger.Error.Println(err)
 	}
 
@@ -160,7 +161,7 @@ func (adapter pollHttpAdapter) getResultPage(w http.ResponseWriter, r *http.Requ
 	}
 
 	pollId, _ := strconv.Atoi(r.PathValue("bookid"))
-	results := adapter.poll.GetResults(pollId)
+	results := adapter.voteRepo.GetResults(pollId)
 
 	pages.Results(session, results).Render(r.Context(), w)
 }

@@ -41,19 +41,17 @@ func main() {
 	userService := services.NewUserService(userRepo)
 
 	voteRepo := persistence.NewVotePostgresRepository(dbConnection)
-
 	pollRepo := persistence.NewPollPostgresRepository(dbConnection)
-	pollService := services.NewPollService(pollRepo, voteRepo)
 
 	sessionHandler := middleware.HandlerWithSession(sessionStore)
 	middlewareStack := middleware.CreateStack(sessionHandler, middleware.AllowCors, middleware.Logger)
 
 	authService, _ := authenticator.New()
 
-	routers.NewAuthorHttpAdapter(router, pollService)
+	routers.NewAuthorHttpAdapter(router, pollRepo)
 	routers.NewLoginHttpAdapter(authService, router)
 	routers.NewCallbackHttpAdapter(authService, userService, router)
-	routers.NewPollHttpAdapter(pollService, cld, router)
+	routers.NewPollHttpAdapter(pollRepo, voteRepo, cld, router)
 	routers.NewUserHttpAdapter(userService, router)
 	routers.NewStaticHttpAdapter(router)
 

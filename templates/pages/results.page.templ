@@ -1,12 +1,12 @@
 package pages
 
 import (
+	"github.com/bythecover/backend/model"
 	"github.com/bythecover/backend/sessions"
-	"github.com/bythecover/backend/persistence"
 	"strconv"
 )
 
-templ Results(session *sessions.Session, results []persistence.Result) {
+templ Results(session *sessions.Session, results []model.PollResult) {
 	@NewPage(session) {
 		<div class="py-3 bg-white w-3/4 rounded-md mt-3 m-auto">
 			<table class="auto w-full">

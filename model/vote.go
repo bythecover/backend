@@ -6,3 +6,9 @@ type Vote struct {
 	Source      string `json:"source"`
 	UserId      string `json:"user_id"`
 }
+
+type VoteRepo interface {
+	SubmitVote(Vote) error
+	HasUserVoted(string, int) bool
+	GetResults(int) []PollResult
+}
