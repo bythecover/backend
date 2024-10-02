@@ -2,23 +2,22 @@ package routers
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/bythecover/backend/authenticator"
 	"github.com/bythecover/backend/model"
-	"github.com/bythecover/backend/services"
+	"github.com/bythecover/backend/persistence"
 	"github.com/bythecover/backend/sessions"
 )
 
 type callbackHttpAdapter struct {
 	authenticator *authenticator.Authenticator
-	userService   services.UserService
+	userRepo      persistence.UserRepo
 }
 
-func NewCallbackHttpAdapter(authenticator *authenticator.Authenticator, userService services.UserService, router *http.ServeMux) callbackHttpAdapter {
+func NewCallbackHttpAdapter(authenticator *authenticator.Authenticator, userRepo persistence.UserRepo, router *http.ServeMux) callbackHttpAdapter {
 	adapter := callbackHttpAdapter{
 		authenticator,
-		userService,
+		userRepo,
 	}
 
 	adapter.RegisterRoutes(router)
@@ -63,19 +62,14 @@ func (adapter callbackHttpAdapter) handler(w http.ResponseWriter, r *http.Reques
 	session.AccessToken = token.AccessToken
 	session.Save()
 
-	existingUser, err := adapter.userService.GetUser(session.Profile.UserId)
+	existingUser, err := adapter.userRepo.GetUser(session.Profile.UserId)
 	if err != nil {
-		currentTime := time.Now()
-		adapter.userService.Create(model.UserResp{
-			Id:        session.Profile.UserId,
-			FirstName: session.Profile.Nickname,
-			LastName:  session.Profile.Name,
-			Email:     "dummy@email.com",
-			Role:      "user",
-			CreatedAt: &currentTime,
-		})
-
 		session.Profile.Role = "user"
+		if err == model.ErrUserNotFound {
+			user, _ := model.NewUser(session.Profile.UserId, session.Profile.Nickname, session.Profile.Name, "test@test.com", session.Profile.Role)
+
+			err = adapter.userRepo.Save(user)
+		}
 	} else {
 		session.Profile.Role = existingUser.Role
 	}

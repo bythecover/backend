@@ -5,11 +5,9 @@ import (
 	"os"
 
 	"github.com/bythecover/backend/authenticator"
-	"github.com/bythecover/backend/http/middleware"
-	"github.com/bythecover/backend/http/routers"
 	"github.com/bythecover/backend/logger"
 	"github.com/bythecover/backend/persistence"
-	"github.com/bythecover/backend/services"
+	"github.com/bythecover/backend/routers"
 	"github.com/bythecover/backend/sessions"
 	"github.com/cloudinary/cloudinary-go/v2"
 
@@ -30,29 +28,30 @@ func main() {
 		logger.Error.Fatalln("Unable to instantiate cloudinary: ", err.Error())
 	}
 
+	// I/O
 	router := http.NewServeMux()
-
 	dbConnection := persistence.NewPostgresDatabase()
 
+	// User Session/Auth
 	sessionStore := sessions.MemoryStore{}
 	sessions.CreateStore(sessionStore)
+	authService, _ := authenticator.New()
 
+	// Repos
 	userRepo := persistence.NewUserPostgresRepository(dbConnection)
-	userService := services.NewUserService(userRepo)
-
 	voteRepo := persistence.NewVotePostgresRepository(dbConnection)
 	pollRepo := persistence.NewPollPostgresRepository(dbConnection)
 
-	sessionHandler := middleware.HandlerWithSession(sessionStore)
-	middlewareStack := middleware.CreateStack(sessionHandler, middleware.AllowCors, middleware.Logger)
+	// Middleware
+	sessionHandler := routers.HandlerWithSession(sessionStore)
+	middlewareStack := routers.CreateStack(sessionHandler, routers.AllowCors, routers.Logger)
 
-	authService, _ := authenticator.New()
-
+	// Setting up endpoints
 	routers.NewAuthorHttpAdapter(router, pollRepo)
 	routers.NewLoginHttpAdapter(authService, router)
-	routers.NewCallbackHttpAdapter(authService, userService, router)
+	routers.NewCallbackHttpAdapter(authService, userRepo, router)
 	routers.NewPollHttpAdapter(pollRepo, voteRepo, cld, router)
-	routers.NewUserHttpAdapter(userService, router)
+	routers.NewUserHttpAdapter(userRepo, router)
 	routers.NewStaticHttpAdapter(router)
 
 	server := http.Server{

@@ -81,7 +81,7 @@ type SessionStore interface {
 
 var globalStore SessionStore
 
-// Create store should be called on setup to allow for
+// Create store should be called on setup
 func CreateStore(store SessionStore) {
 	globalStore = store
 }

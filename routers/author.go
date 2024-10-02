@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/bythecover/backend/http/middleware"
 	"github.com/bythecover/backend/logger"
 	"github.com/bythecover/backend/model"
 	"github.com/bythecover/backend/sessions"
@@ -15,6 +14,7 @@ type authorHttpAdapter struct {
 	pollRepo model.PollRepo
 }
 
+// Provides endpoints for pages that are specific to authors
 func NewAuthorHttpAdapter(router *http.ServeMux, pollRepo model.PollRepo) authorHttpAdapter {
 	adapter := authorHttpAdapter{pollRepo}
 	adapter.registerRoutes(router)
@@ -22,7 +22,7 @@ func NewAuthorHttpAdapter(router *http.ServeMux, pollRepo model.PollRepo) author
 }
 
 func (adapter *authorHttpAdapter) registerRoutes(router *http.ServeMux) {
-	isAuthorized := middleware.IsAuthorizedAsAuthor()
+	isAuthorized := IsAuthorizedAsAuthor()
 	router.Handle("GET /a/{authorName}", isAuthorized(http.HandlerFunc(adapter.getAuthorPage)))
 	router.Handle("PUT /a/{authorName}/{bookId}", isAuthorized(http.HandlerFunc(adapter.finalizePoll)))
 }

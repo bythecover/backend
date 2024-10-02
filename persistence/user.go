@@ -70,11 +70,11 @@ func (repo userPostgresRepository) GetUser(id string) (model.UserResp, error) {
 	err := repo.db.QueryRow("SELECT id, user_role FROM users WHERE id = $1", id).Scan(&user.Id, &user.Role)
 
 	if err != nil {
-		logger.Error.Println(err)
 		if err == sql.ErrNoRows {
 			return model.UserResp{}, model.ErrUserNotFound
 		}
 
+		logger.Error.Println(err)
 		return model.UserResp{}, err
 	}
 

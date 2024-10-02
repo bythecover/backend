@@ -2,7 +2,7 @@ package routers
 
 import (
 	"github.com/bythecover/backend/model"
-	"github.com/bythecover/backend/services"
+	"github.com/bythecover/backend/persistence"
 
 	"encoding/json"
 	"io"
@@ -10,12 +10,12 @@ import (
 )
 
 type userHttpAdapter struct {
-	userService services.UserService
+	userRepo persistence.UserRepo
 }
 
-func NewUserHttpAdapter(userService services.UserService, router *http.ServeMux) userHttpAdapter {
+func NewUserHttpAdapter(userRepo persistence.UserRepo, router *http.ServeMux) userHttpAdapter {
 	adapter := userHttpAdapter{
-		userService,
+		userRepo,
 	}
 	adapter.RegisterRoutes(router)
 	return adapter
@@ -28,7 +28,6 @@ func decode[V any](r io.Reader, p V) error {
 
 func (adapter userHttpAdapter) RegisterRoutes(router *http.ServeMux) {
 	router.HandleFunc("POST /user", adapter.createUser)
-	router.HandleFunc("GET /user/{id}", adapter.getUser)
 }
 
 func (adapter userHttpAdapter) createUser(w http.ResponseWriter, r *http.Request) {
@@ -40,29 +39,14 @@ func (adapter userHttpAdapter) createUser(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	err = adapter.userService.Create(person)
+	user, err := model.NewUser(person.Id, person.FirstName, person.LastName, person.Email, person.Role)
+
+	err = adapter.userRepo.Save(user)
+
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-}
-
-func (adapter userHttpAdapter) getUser(w http.ResponseWriter, r *http.Request) {
-	id := r.PathValue("id")
-
-	user, err := adapter.userService.GetUser(id)
-
-	if err != nil {
-		if err == model.ErrUserNotFound {
-			w.WriteHeader(http.StatusNotFound)
-		} else {
-			w.WriteHeader(http.StatusInternalServerError)
-		}
-	} else {
-		user, _ := json.Marshal(user)
-		w.Write(user)
-	}
-
 }
