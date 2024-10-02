@@ -1,4 +1,4 @@
-package middleware
+package routers
 
 import (
 	"net/http"

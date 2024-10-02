@@ -13,17 +13,6 @@ type votePostgresRepository struct {
 	db *sql.DB
 }
 
-type Result struct {
-	model.Option
-	Total int
-}
-
-type VoteRepo interface {
-	SubmitVote(model.Vote) error
-	HasUserVoted(string, int) bool
-	GetResults(int) []Result
-}
-
 func NewVotePostgresRepository(db *sql.DB) votePostgresRepository {
 	if db == nil {
 		logger.Error.Fatalln("SQL Client was not passed to Vote Repo Constructor")
@@ -63,14 +52,14 @@ func (repo votePostgresRepository) HasUserVoted(userId string, pollId int) bool 
 	return foundId != ""
 }
 
-func (repo votePostgresRepository) GetResults(pollId int) []Result {
+func (repo votePostgresRepository) GetResults(pollId int) []model.PollResult {
 	stmt, err := repo.db.Prepare("SELECT option.name, option.image, option.id, COUNT(votes.id) as total_votes FROM option LEFT JOIN votes ON option.id = votes.selection WHERE option.poll_event_id = $1 GROUP BY option.id ORDER BY total_votes DESC;")
 
 	if err != nil {
 		logger.Error.Println(err.Error())
 	}
 
-	var results []Result
+	var results []model.PollResult
 	rows, err := stmt.Query(pollId)
 
 	if err != nil {
@@ -78,7 +67,7 @@ func (repo votePostgresRepository) GetResults(pollId int) []Result {
 	}
 
 	for rows.Next() {
-		var result Result
+		var result model.PollResult
 		err := rows.Scan(&result.Name, &result.Image, &result.Id, &result.Total)
 
 		if err != nil {

@@ -4,25 +4,25 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/bythecover/backend/http/middleware"
 	"github.com/bythecover/backend/logger"
-	"github.com/bythecover/backend/services"
+	"github.com/bythecover/backend/model"
 	"github.com/bythecover/backend/sessions"
 	"github.com/bythecover/backend/templates/pages"
 )
 
 type authorHttpAdapter struct {
-	pollService services.PollService
+	pollRepo model.PollRepo
 }
 
-func NewAuthorHttpAdapter(router *http.ServeMux, pollService services.PollService) authorHttpAdapter {
-	adapter := authorHttpAdapter{pollService}
+// Provides endpoints for pages that are specific to authors
+func NewAuthorHttpAdapter(router *http.ServeMux, pollRepo model.PollRepo) authorHttpAdapter {
+	adapter := authorHttpAdapter{pollRepo}
 	adapter.registerRoutes(router)
 	return adapter
 }
 
 func (adapter *authorHttpAdapter) registerRoutes(router *http.ServeMux) {
-	isAuthorized := middleware.IsAuthorizedAsAuthor()
+	isAuthorized := IsAuthorizedAsAuthor()
 	router.Handle("GET /a/{authorName}", isAuthorized(http.HandlerFunc(adapter.getAuthorPage)))
 	router.Handle("PUT /a/{authorName}/{bookId}", isAuthorized(http.HandlerFunc(adapter.finalizePoll)))
 }
@@ -43,7 +43,7 @@ func (adapter *authorHttpAdapter) getAuthorPage(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	polls, err := adapter.pollService.GetCreatedBy(authorId)
+	polls, err := adapter.pollRepo.GetCreatedBy(authorId)
 
 	if err != nil {
 		logger.Error.Println(err)
@@ -62,7 +62,7 @@ func (adapter *authorHttpAdapter) finalizePoll(w http.ResponseWriter, r *http.Re
 	}
 
 	// TODO: Check to see if author has permissions to expire this poll
-	adapter.pollService.ExpirePoll(pollId)
+	adapter.pollRepo.ExpirePoll(pollId)
 
 	w.WriteHeader(http.StatusOK)
 }
