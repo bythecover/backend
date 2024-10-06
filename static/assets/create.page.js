@@ -1,8 +1,8 @@
-const selector = document.querySelector("[data-option-config]").cloneNode();
-
 function addOption() {
-	const config = selector;
+	const config = document.querySelector("[data-option-config]");
 	const newNode = config.cloneNode(true);
+	newNode.querySelector('input[type="text"]').value = '';
+	newNode.querySelector('input[type="file"]').value = '';
 	config.parentNode.appendChild(newNode);
 }
 
