@@ -95,8 +95,8 @@ func (adapter pollHttpAdapter) getPollPage(w http.ResponseWriter, r *http.Reques
 	}
 
 	if err != nil {
-		logger.Error.Fatalln(err)
-		w.WriteHeader(http.StatusNotFound)
+		w.WriteHeader(http.StatusInternalServerError)
+		logger.Error.Println(err)
 		return
 	}
 
