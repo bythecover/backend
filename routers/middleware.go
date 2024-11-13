@@ -6,6 +6,7 @@ import (
 
 	"github.com/bythecover/backend/logger"
 	"github.com/bythecover/backend/sessions"
+	"github.com/bythecover/backend/templates/pages"
 )
 
 // A WrappedWriter exposes the status code to be able to print in the Logger
@@ -100,6 +101,7 @@ func CreateAuthorizedHandler(requiredRoles []string) Middleware {
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				logger.Error.Println(err.Error())
+				pages.FiveHundred().Render(r.Context(), w)
 				return
 			}
 

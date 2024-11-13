@@ -31,8 +31,9 @@ func (adapter *authorHttpAdapter) getAuthorPage(w http.ResponseWriter, r *http.R
 	session, err := sessions.WithSession(r.Context())
 
 	if err != nil {
-		logger.Warn.Println(err)
+		logger.Error.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
+		pages.FiveHundred().Render(r.Context(), w)
 		return
 	}
 

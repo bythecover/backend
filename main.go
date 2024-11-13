@@ -9,6 +9,7 @@ import (
 	"github.com/bythecover/backend/persistence"
 	"github.com/bythecover/backend/routers"
 	"github.com/bythecover/backend/sessions"
+	"github.com/bythecover/backend/templates/pages"
 	"github.com/cloudinary/cloudinary-go/v2"
 
 	"github.com/goloop/env"
@@ -53,6 +54,14 @@ func main() {
 	routers.NewPollHttpAdapter(pollRepo, voteRepo, cld, router)
 	routers.NewUserHttpAdapter(userRepo, router)
 	routers.NewStaticHttpAdapter(router)
+
+	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		pages.FourOhFourPage().Render(r.Context(), w)
+	})
+
+	router.HandleFunc("/error-test", func(w http.ResponseWriter, r *http.Request) {
+		pages.FiveHundred().Render(r.Context(), w)
+	})
 
 	server := http.Server{
 		Handler: middlewareStack(router),

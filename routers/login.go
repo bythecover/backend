@@ -8,6 +8,7 @@ import (
 	"github.com/bythecover/backend/authenticator"
 	"github.com/bythecover/backend/logger"
 	"github.com/bythecover/backend/sessions"
+	"github.com/bythecover/backend/templates/pages"
 )
 
 type loginHttpAdapter struct {
@@ -30,8 +31,9 @@ func (adapter loginHttpAdapter) loginHandler(w http.ResponseWriter, r *http.Requ
 	session, err := sessions.WithSession(r.Context())
 
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
 		logger.Error.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.FiveHundred().Render(r.Context(), w)
 		return
 	}
 

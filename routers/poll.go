@@ -49,7 +49,9 @@ func (adapter pollHttpAdapter) submitVote(w http.ResponseWriter, r *http.Request
 	session, err := sessions.WithSession(r.Context())
 
 	if err != nil {
+		logger.Error.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
+		pages.FiveHundred().Render(r.Context(), w)
 		return
 	}
 
@@ -95,8 +97,9 @@ func (adapter pollHttpAdapter) getPollPage(w http.ResponseWriter, r *http.Reques
 	}
 
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
 		logger.Error.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.FiveHundred().Render(r.Context(), w)
 		return
 	}
 
@@ -112,8 +115,9 @@ func (adapter pollHttpAdapter) createNewPoll(w http.ResponseWriter, r *http.Requ
 	session, err := sessions.WithSession(r.Context())
 
 	if err != nil {
-		logger.Error.Println(err.Error())
+		logger.Error.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
+		pages.FiveHundred().Render(r.Context(), w)
 		return
 	}
 
@@ -122,6 +126,7 @@ func (adapter pollHttpAdapter) createNewPoll(w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		logger.Error.Println(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
+		pages.FiveHundred().Render(r.Context(), w)
 		return
 	}
 
@@ -152,8 +157,9 @@ func (adapter pollHttpAdapter) getResultPage(w http.ResponseWriter, r *http.Requ
 	session, err := sessions.WithSession(r.Context())
 
 	if err != nil {
+		logger.Error.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		logger.Error.Println(err.Error())
+		pages.FiveHundred().Render(r.Context(), w)
 		return
 	}
 

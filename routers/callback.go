@@ -4,9 +4,11 @@ import (
 	"net/http"
 
 	"github.com/bythecover/backend/authenticator"
+	"github.com/bythecover/backend/logger"
 	"github.com/bythecover/backend/model"
 	"github.com/bythecover/backend/persistence"
 	"github.com/bythecover/backend/sessions"
+	"github.com/bythecover/backend/templates/pages"
 )
 
 type callbackHttpAdapter struct {
@@ -48,7 +50,9 @@ func (adapter callbackHttpAdapter) handler(w http.ResponseWriter, r *http.Reques
 
 	idToken, err := adapter.authenticator.VerifyIDToken(r.Context(), token)
 	if err != nil {
+		logger.Error.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
+		pages.FiveHundred().Render(r.Context(), w)
 		return
 	}
 
