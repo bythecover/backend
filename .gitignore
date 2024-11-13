@@ -4,4 +4,4 @@ main
 .env
 backend
 tmp/
-tmp
+node_modules/

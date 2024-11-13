@@ -21,9 +21,9 @@ templ AuthorPage(session *sessions.Session, polls []model.Poll) {
 						<tr>
 							<td>{ poll.Title }</td>
 							if poll.Expired {
-								<td><a type="button" class="bg-green-500 px-3 text-white font-bold rounded-md" href={ templ.SafeURL("/a/" + session.Profile.UserId + "/" + strconv.Itoa(poll.Id)) }>Results</a></td>
+								<td><a type="button" class="btn btn-primary" href={ templ.SafeURL("/a/" + session.Profile.UserId + "/" + strconv.Itoa(poll.Id)) }>Results</a></td>
 							} else {
-								<td><button type="button" class="bg-red-500 px-3 py-2 text-white font-bold rounded-md" hx-put={ session.Profile.UserId + "/" + strconv.Itoa(poll.Id) } name="pollId" hx-swap="none">Finalize</button></td>
+								<td><button type="button" class="btn btn-primary" hx-put={ session.Profile.UserId + "/" + strconv.Itoa(poll.Id) } name="pollId" hx-swap="none">Finalize</button></td>
 							}
 						</tr>
 					}
