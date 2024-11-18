@@ -8,27 +8,28 @@ import (
 
 templ AuthorPage(session *sessions.Session, polls []model.Poll) {
 	@NewPage(session) {
-		<div class="py-3 bg-white max-w-5xl rounded-md mt-3 m-auto">
-			<table class="auto w-full text-center divide-y">
-				<thead>
-					<tr>
-						<th>Title</th>
-						<th>Expired</th>
-					</tr>
-				</thead>
-				<tbody class="divide-y">
-					for _, poll := range polls {
-						<tr>
-							<td>{ poll.Title }</td>
-							if poll.Expired {
-								<td><a type="button" class="btn btn-primary" href={ templ.SafeURL("/a/" + session.Profile.UserId + "/" + strconv.Itoa(poll.Id)) }>Results</a></td>
-							} else {
-								<td><button type="button" class="btn btn-primary" hx-put={ session.Profile.UserId + "/" + strconv.Itoa(poll.Id) } name="pollId" hx-swap="none">Finalize</button></td>
-							}
-						</tr>
-					}
-				</tbody>
-			</table>
+		<div class="text-right">
+			<a href="/create" class="btn btn-primary">Create a New Poll</a>
 		</div>
+		<table class="table table-zebra">
+			<thead>
+				<tr>
+					<th>Title</th>
+					<th>Expired</th>
+				</tr>
+			</thead>
+			<tbody class="divide-y">
+				for _, poll := range polls {
+					<tr>
+						<td>{ poll.Title }</td>
+						if poll.Expired {
+							<td><a type="button" class="btn btn-info" href={ templ.SafeURL("/a/" + session.Profile.UserId + "/" + strconv.Itoa(poll.Id)) }>Results</a></td>
+						} else {
+							<td><button type="button" class="btn btn-success" hx-put={ session.Profile.UserId + "/" + strconv.Itoa(poll.Id) } name="pollId" hx-swap="none">Finalize</button></td>
+						}
+					</tr>
+				}
+			</tbody>
+		</table>
 	}
 }

@@ -6,19 +6,27 @@ import (
 )
 
 templ Nav(session *sessions.Session) {
-	<nav class="bg-white py-3 px-6 flex justify-between shadow-sm w-full items-center">
-		<div class="flex items-center gap-3">
+	<nav class="navbar bg-base-100 flex justify-between items-center">
+		<ul class="menu menu-horizontal">
 			<img class="max-w-10 h-auto mr-3" src={ os.Getenv("DOMAIN") + "/static/Logo.png" }/>
-			<a>Home</a>
-			<a>About</a>
-		</div>
+			<li>
+				<a>Home</a>
+			</li>
+			<li>
+				<a>About</a>
+			</li>
+		</ul>
 		if session != nil {
-			<div class="right-5 flex gap-5">
+			<ul class="menu menu-horizontal">
 				if session.Profile.Role == "author" {
-					<a href={ templ.URL("/a/" + session.Profile.UserId) }>My Polls</a>
+					<li>
+						<a href={ templ.URL("/a/" + session.Profile.UserId) }>My Polls</a>
+					</li>
 				}
-				<p>{ session.Profile.Name }</p>
-			</div>
+				<li>
+					<p>{ session.Profile.Name }</p>
+				</li>
+			</ul>
 		}
 	</nav>
 }

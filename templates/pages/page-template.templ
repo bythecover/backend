@@ -15,9 +15,11 @@ templ NewPage(session *sessions.Session) {
 			<link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css"/>
 			<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 		</head>
-		<body class="bg-gray-300 h-[100vh]">
+		<body class="bg-base-300 h-[100vh]">
 			@components.Nav(session)
-			{ children... }
+			<div class="max-w-7xl m-auto mt-5 rounded-md p-3 bg-white">
+				{ children... }
+			</div>
 		</body>
 	</html>
 }
