@@ -1,12 +1,18 @@
 package components
 
+import "strconv"
+
 templ Carousel(cards []templ.Component) {
-	<button onclick="decrementSelection()" type="button" class="z-10 p-[15px] bg-black rounded-full absolute top-1/2 translate-y-[-50%] left-4 w-16 h-16"><i class="border-t-2 border-r-2 w-7 h-7 border-white inline-block transform rotate-[225deg] translate-x-2"></i></button>
-	<button onclick="incrementSelection()" type="button" class="z-10 p-[15px] bg-black rounded-full absolute right-4 translate-y-[-50%] top-1/2 w-16 h-16"><i class="border-t-2 border-r-2 w-7 h-7 border-white inline-block transform rotate-45 translate-x-[-0.25rem]"></i></button>
-	<div class="w-100 whitespace-nowrap overflow-x-scroll overflow-y-visible snap-x snap-mandatory relative my-10 hide-scrollbar" data-carousel>
-		<div class="inline-block w-[50vw]"></div>
-		for _, item := range cards {
-			@item
+	<div class="carousel w-full">
+		for i, item := range cards {
+			<div id={ "slide" + strconv.Itoa(i+1) } class="carousel-item relative w-full justify-center">
+				@item
+				<div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+					// TODO: These values need to be determined dynamically
+					<a href="#slide4" class="btn btn-circle btn-neutral">❮</a>
+					<a href="#slide2" class="btn btn-circle btn-neutral">❯</a>
+				</div>
+			</div>
 		}
 		<div class="inline-block w-[50vw]"></div>
 	</div>

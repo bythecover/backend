@@ -1,20 +1,25 @@
 package pages
 
-import "github.com/bythecover/backend/templates/components"
-import "github.com/bythecover/backend/sessions"
-import "os"
+import (
+	"github.com/bythecover/backend/sessions"
+	"github.com/bythecover/backend/templates/components"
+	"os"
+)
 
 templ NewPage(session *sessions.Session) {
 	<!DOCTYPE html>
-	<html lang="en">
+	<html lang="en" data-theme="light">
 		<head>
 			<link href={ os.Getenv("DOMAIN") + "/static/output.css" } rel="stylesheet"/>
 			<title>My Page</title>
+			<link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css"/>
 			<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 		</head>
-		<body class="bg-gray-300 h-[100vh]">
+		<body class="bg-base-300 h-[100vh]">
 			@components.Nav(session)
-			{ children... }
+			<div class="max-w-7xl m-auto mt-5 rounded-md p-5 bg-white">
+				{ children... }
+			</div>
 		</body>
 	</html>
 }

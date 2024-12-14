@@ -41,7 +41,7 @@ func (adapter pollHttpAdapter) registerRoutes(router *http.ServeMux) {
 
 	isAuthorizedAsAuthor := CreateAuthorizedHandler([]string{"author"})
 	router.Handle("GET /polls/admin/{id}", isAuthorizedAsAuthor(http.HandlerFunc(adapter.getResultPage)))
-	router.Handle("GET /polls/admin", isAuthorizedAsAuthor(http.HandlerFunc(adapter.getCreatePollPage)))
+	router.Handle("GET /create", isAuthorizedAsAuthor(http.HandlerFunc(adapter.getCreatePollPage)))
 	router.Handle("POST /polls/admin", isAuthorizedAsAuthor(http.HandlerFunc(adapter.createNewPoll)))
 }
 

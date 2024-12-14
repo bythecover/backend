@@ -7,18 +7,22 @@ import (
 
 templ CreatePage(session *sessions.Session) {
 	@NewPage(session) {
-		<form hx-post={ "/a/" + session.Profile.UserId } enctype="multipart/form-data" class="m-auto bg-white w-4/6 mt-5 rounded-md p-3">
-			<input type="text" name="title" placeholder="Name of the Book" required class="text-left bg-gray-300 rounded-md p-3"/>
-			<button class="bg-green-500 hover:bg-green-600 active:bg-green-800 text-white font-bold rounded-lg text-center p-3" data-add-config onclick="addOption()" type="button">Add Another Cover</button>
-			<div class="my-3">
-				<div data-option-config class="text-center my-2">
-					<label for="name">Cover name:</label>
-					<input class="border-gray-400 border-solid border-2 rounded-sm" type="text" id="name" name="name" required/>
-					<input name="image" type="file" accept="image/*" required/>
-					<button class="bg-red-500 hover:bg-red-600 active:bg-red-800 text-white font-bold py-1 px-5 rounded-lg" type="button" onclick="removeOption(this)">remove</button>
+		<form hx-post={ "/a/" + session.Profile.UserId } enctype="multipart/form-data" class="flex flex-col gap-8 p-5">
+			<div class="flex justify-between">
+				<input type="text" name="title" placeholder="Name of the Book" required class="input input-bordered w-1/2"/>
+				<div>
+					<button class="btn btn-primary" data-add-config onclick="addOption()" type="button">Add Another Cover</button>
+					<a class="btn btn-error" href={ "/a/" + templ.URL(session.Profile.UserId) }>Cancel</a>
 				</div>
 			</div>
-			<button class="bg-green-500 hover:bg-green-600 active:bg-green-800 text-white font-bold p-3 rounded-lg text-center" type="submit">Submit</button>
+			<div>
+				<div data-option-config class="text-center my-2">
+					<input class="input input-bordered" placeholder="Cover Name" type="text" id="name" name="name" required/>
+					<input name="image" type="file" accept="image/*" required class="file-input file-input-bordered"/>
+					<button class="btn btn-error" type="button" onclick="removeOption(this)">Remove</button>
+				</div>
+			</div>
+			<button class="btn btn-success" type="submit">Submit</button>
 		</form>
 	}
 	<script src={ os.Getenv("DOMAIN") + "/static/create.page.js" }></script>

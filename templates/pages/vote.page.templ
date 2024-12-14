@@ -11,8 +11,10 @@ import (
 
 templ VotePage(poll model.Poll, session *sessions.Session) {
 	@NewPage(session) {
-		<div class="relative top-1/2 translate-y-[-50%]">
-			<h1 class="text-center font-bold text-3xl">{ poll.Title }</h1>
+		<div class="py-10">
+			<div class="prose m-auto mb-5">
+				<h1 class="text-center">{ poll.Title }</h1>
+			</div>
 			<form hx-post={ "/a/" + poll.CreatedBy + "/" + strconv.Itoa(poll.Id) } hx-target="body" hx-swap="afterbegin">
 				@components.Carousel(generateCards(poll.Options))
 				<div class="text-center">
