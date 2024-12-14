@@ -5,4 +5,3 @@ main
 backend
 tmp/
 node_modules/
-src/assets/output.css
