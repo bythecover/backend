@@ -8,7 +8,8 @@ import (
 
 templ AuthorPage(session *sessions.Session, polls []model.Poll) {
 	@NewPage(session) {
-		<div class="text-right">
+		<div class="text-right flex font-bold text-5xl gap-7 mb-5">
+			<h1>Your Polls</h1>
 			<a href="/create" class="btn btn-primary">Create a New Poll</a>
 		</div>
 		<table class="table table-zebra">
