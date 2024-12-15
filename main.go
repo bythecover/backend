@@ -53,6 +53,7 @@ func main() {
 	routers.NewPollHttpAdapter(pollRepo, voteRepo, cld, router)
 	routers.NewUserHttpAdapter(userRepo, router)
 	routers.NewStaticHttpAdapter(router)
+	routers.Home(router)
 
 	server := http.Server{
 		Handler: middlewareStack(router),

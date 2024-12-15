@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    h1 {
+        @apply font-bold text-5xl;
+    }
+}
+
 .hide-scrollbar {
-  scrollbar-width: none;
+    scrollbar-width: none;
 }
