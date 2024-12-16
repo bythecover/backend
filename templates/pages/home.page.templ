@@ -1,7 +1,9 @@
 package pages
 
-templ Home() {
-	@NewPage(nil) {
+import "github.com/bythecover/backend/sessions"
+
+templ Home(session *sessions.Session) {
+	@NewPage(session) {
 		<div
 			class="hero min-h-screen"
 			style="background-image: url('/static/waves.svg');"

@@ -1,7 +1,6 @@
 package routers
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 
@@ -86,12 +85,15 @@ func (adapter pollHttpAdapter) getPollPage(w http.ResponseWriter, r *http.Reques
 	authorId := r.PathValue("authorName")
 	bookId, err := strconv.Atoi(r.PathValue("bookid"))
 
-	log.Println(authorId)
-
 	poll, err := adapter.pollRepo.GetById(bookId, authorId)
 
+	logger.Info.Println("HERE")
+	logger.Info.Println(session.Profile.UserId)
+	logger.Info.Println(poll.CreatedBy)
 	if session.Profile.UserId == poll.CreatedBy {
 		// TODO: Show a live results page to the author that created the poll
+		adapter.getResultPage(w, r)
+		return
 	}
 
 	if err != nil {

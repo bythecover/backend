@@ -10,13 +10,10 @@ templ Nav(session *sessions.Session) {
 		<ul class="menu menu-horizontal">
 			<img class="max-w-10 h-auto mr-3" src={ os.Getenv("DOMAIN") + "/static/Logo.png" }/>
 			<li>
-				<a>Home</a>
-			</li>
-			<li>
-				<a>About</a>
+				<a href="/">Home</a>
 			</li>
 		</ul>
-		if session != nil {
+		if session.Profile.Name != "" {
 			<div class="dropdown dropdown-end">
 				<div tabindex="0" role="button" class="btn">
 					<div tabindex="0" role="button" class="m-1">{ session.Profile.Name }</div>
@@ -30,6 +27,15 @@ templ Nav(session *sessions.Session) {
 							<a href={ templ.URL("/a/" + session.Profile.UserId) }>My Polls</a>
 						</li>
 					}
+					<li>
+						<a href="/logout">Logout</a>
+					</li>
+				</ul>
+			</div>
+		} else {
+			<div class="flex-none">
+				<ul class="menu menu-horizontal px-1">
+					<li><a href="/login">Login</a></li>
 				</ul>
 			</div>
 		}
