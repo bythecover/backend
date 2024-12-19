@@ -1,0 +1,21 @@
+package pages
+
+import "github.com/bythecover/backend/sessions"
+
+templ Home(session *sessions.Session) {
+	@NewPage(session) {
+		<div
+			class="hero h-[calc(100vh-98.063px)] bg-cover bg-[bottom]"
+			style="background-image: url('/static/waves.svg');"
+		>
+			<div class="hero-content text-center">
+				<div class="max-w-lg">
+					<h1 class="mb-5">Welcome to ByTheCover</h1>
+					<p class="mb-5">
+						The place where fans choose the next album of their favorite artist!
+					</p>
+				</div>
+			</div>
+		</div>
+	}
+}

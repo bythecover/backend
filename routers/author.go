@@ -64,5 +64,6 @@ func (adapter *authorHttpAdapter) finalizePoll(w http.ResponseWriter, r *http.Re
 	// TODO: Check to see if author has permissions to expire this poll
 	adapter.pollRepo.ExpirePoll(pollId)
 
+	w.Header().Add("HX-Refresh", "true")
 	w.WriteHeader(http.StatusOK)
 }
