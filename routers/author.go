@@ -53,6 +53,12 @@ func (adapter *authorHttpAdapter) getAuthorPage(w http.ResponseWriter, r *http.R
 }
 
 func (adapter *authorHttpAdapter) finalizePoll(w http.ResponseWriter, r *http.Request) {
+	session, err := sessions.WithSession(r.Context())
+
+	if err != nil {
+		logger.Error.Println(err)
+	}
+
 	pollId, err := strconv.Atoi(r.PathValue("bookId"))
 
 	if err != nil {
@@ -61,8 +67,12 @@ func (adapter *authorHttpAdapter) finalizePoll(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	// TODO: Check to see if author has permissions to expire this poll
-	adapter.pollRepo.ExpirePoll(pollId)
+	err = adapter.pollRepo.ExpirePoll(pollId, session.Profile.UserId)
+	if err != nil {
+		logger.Warn.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	w.Header().Add("HX-Refresh", "true")
 	w.WriteHeader(http.StatusOK)

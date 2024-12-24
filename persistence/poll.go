@@ -105,8 +105,8 @@ func (repo pollPostgresRepository) GetCreatedBy(userId string) ([]model.Poll, er
 	return polls, nil
 }
 
-func (repo pollPostgresRepository) ExpirePoll(pollId int) error {
-	row := repo.db.QueryRow("UPDATE poll_events SET expired = true WHERE id = $1", pollId)
+func (repo pollPostgresRepository) ExpirePoll(pollId int, userId string) error {
+	row := repo.db.QueryRow("UPDATE poll_events SET expired = true WHERE id = $1 AND created_by = $2", pollId, userId)
 
 	return row.Err()
 }
