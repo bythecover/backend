@@ -18,7 +18,7 @@ type PollRepo interface {
 	GetById(int, string) (Poll, error)
 	CreatePoll(Poll) error
 	GetCreatedBy(string) ([]Poll, error)
-	ExpirePoll(int) error
+	ExpirePoll(int, string) error
 }
 
 type PollResult struct {
