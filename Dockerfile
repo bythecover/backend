@@ -1,9 +1,7 @@
-FROM golang:1.22-alpine
+# Environment Variables are set with the cloud provider.
+FROM alpine:latest
+RUN apk add --no-cache gcompat
 WORKDIR /user/src/app
-COPY . ./
-RUN go mod download && go mod verify
-RUN go install github.com/a-h/templ/cmd/templ@latest
-RUN templ generate
-RUN go build
+COPY ./backend /user/src/app
 EXPOSE 8080
 CMD ["./backend"]

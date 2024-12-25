@@ -2,7 +2,6 @@
 **/*_templ.go
 main
 .env
-backend
 tmp/
 node_modules/
-static/assets/output.css
+routers/static/assets/output.css
