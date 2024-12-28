@@ -39,7 +39,6 @@ func (adapter pollHttpAdapter) registerRoutes(router *http.ServeMux) {
 	router.Handle("POST /polls/{id}", isAuthorizedAsAuthorOrUser(http.HandlerFunc(adapter.submitVote)))
 
 	isAuthorizedAsAuthor := CreateAuthorizedHandler([]string{"author"})
-	router.Handle("GET /polls/admin/{id}", isAuthorizedAsAuthor(http.HandlerFunc(adapter.getResultPage)))
 	router.Handle("GET /create", isAuthorizedAsAuthor(http.HandlerFunc(adapter.getCreatePollPage)))
 	router.Handle("POST /polls/admin", isAuthorizedAsAuthor(http.HandlerFunc(adapter.createNewPoll)))
 }
@@ -156,8 +155,17 @@ func (adapter pollHttpAdapter) getResultPage(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	pollId, _ := strconv.Atoi(r.PathValue("id"))
+	pollId, err := strconv.Atoi(r.PathValue("bookid"))
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		logger.Error.Println(err.Error())
+		return
+	}
+
 	results := adapter.voteRepo.GetResults(pollId)
+
+	logger.Info.Print(results)
 
 	pages.Results(session, results).Render(r.Context(), w)
 }
