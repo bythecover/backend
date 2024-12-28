@@ -23,7 +23,7 @@ templ VotePage(poll model.Poll, session *sessions.Session) {
 			</form>
 		</div>
 	}
-	<script src={ os.Getenv("DOMAIN") + "/static/vote.page.js" }></script>
+	<script src={ os.Getenv("DOMAIN") + "/static/assets/vote.page.js" }></script>
 }
 
 templ carouselCard(image string, name string, id string) {
