@@ -164,8 +164,5 @@ func (adapter pollHttpAdapter) getResultPage(w http.ResponseWriter, r *http.Requ
 	}
 
 	results := adapter.voteRepo.GetResults(pollId)
-
-	logger.Info.Print(results)
-
 	pages.Results(session, results).Render(r.Context(), w)
 }
