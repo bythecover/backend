@@ -28,7 +28,7 @@ jobs:
     - name: Build
       run: |
         templ generate
-        go build -v ./...
+        go build
         ls -la
     - name: Tidy
       run: go mod tidy
