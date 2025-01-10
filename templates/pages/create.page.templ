@@ -2,30 +2,29 @@ package pages
 
 import (
 	"github.com/bythecover/backend/sessions"
-	"os"
-)
+       )
 
 templ CreatePage(session *sessions.Session) {
-	@NewPage(session) {
-		@Container() {
-			<form hx-post={ "/a/" + session.Profile.UserId } enctype="multipart/form-data" class="flex flex-col gap-8 p-5">
-				<div class="flex justify-between">
-					<input type="text" name="title" placeholder="Name of the Book" required class="input input-bordered w-1/2"/>
-					<div>
-						<button class="btn btn-primary" data-add-config onclick="addOption()" type="button">Add Another Cover</button>
-						<a class="btn btn-error" href={ "/a/" + templ.URL(session.Profile.UserId) }>Cancel</a>
-					</div>
-				</div>
-				<div>
-					<div data-option-config class="text-center my-2">
-						<input class="input input-bordered" placeholder="Cover Name" type="text" id="name" name="name" required/>
-						<input name="image" type="file" accept="image/*" required class="file-input file-input-bordered"/>
-						<button class="btn btn-error" type="button" onclick="removeOption(this)">Remove</button>
-					</div>
-				</div>
-				<button class="btn btn-success" type="submit">Submit</button>
-			</form>
-		}
+    @NewPage(session) {
+	@Container() {
+	    <form hx-post={ "/polls/admin" } enctype="multipart/form-data" class="flex flex-col gap-8 p-5">
+		<div class="flex justify-between">
+		<input type="text" name="title" placeholder="Name of the Book" required class="input input-bordered w-1/2"/>
+		<div>
+		<button class="btn btn-primary" data-add-config onclick="addOption()" type="button">Add Another Cover</button>
+		<a class="btn btn-error" href={ "/a/" + templ.URL(session.Profile.UserId) }>Cancel</a>
+		</div>
+		</div>
+		<div>
+		<div data-option-config class="text-center my-2">
+		<input class="input input-bordered" placeholder="Cover Name" type="text" id="name" name="name" required/>
+		<input name="image" type="file" accept="image/*" required class="file-input file-input-bordered"/>
+		<button class="btn btn-error" type="button" onclick="removeOption(this)">Remove</button>
+		</div>
+		</div>
+		<button class="btn btn-success" type="submit">Submit</button>
+		</form>
 	}
-	<script src={ os.Getenv("DOMAIN") + "/static/assets/create.page.js" }></script>
+    }
+    <script src="/static/assets/create.page.js"></script>
 }

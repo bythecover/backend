@@ -140,7 +140,13 @@ func (adapter pollHttpAdapter) createNewPoll(w http.ResponseWriter, r *http.Requ
 		Title:     values["title"][0],
 		Options:   options,
 	}
-	adapter.pollRepo.CreatePoll(poll)
+	err = adapter.pollRepo.CreatePoll(poll)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		logger.Error.Println(err.Error())
+		return
+	}
 
 	w.Header().Add("Content-Type", "text/plain")
 	w.Write([]byte("<p>Success</p>"))

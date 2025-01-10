@@ -3,7 +3,6 @@ package pages
 import (
 	"github.com/bythecover/backend/sessions"
 	"github.com/bythecover/backend/templates/components"
-	"os"
 )
 
 templ Container() {
@@ -17,7 +16,7 @@ templ NewPage(session *sessions.Session) {
 	<html lang="en" data-theme="light">
 		<head>
 			<link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css"/>
-			<link href={ os.Getenv("DOMAIN") + "/static/assets/output.css" } rel="stylesheet"/>
+			<link href="/static/assets/output.css" rel="stylesheet"/>
 			<title>My Page</title>
 			<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 		</head>
