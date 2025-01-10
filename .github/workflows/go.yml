@@ -33,6 +33,7 @@ jobs:
         path: .
   build:
     runs-on: ubuntu-latest
+    needs: generate
     outputs:
       output1: ${{ steps.artifact-upload-step.outputs.artifact-id }}
     steps:
