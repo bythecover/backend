@@ -21,9 +21,13 @@ jobs:
         go-version-file: './go.mod'
     - name: Version
       run: go version
+    - name: Download Templ
+      run: go install github.com/a-h/templ/cmd/templ@latest
+    - name: Build
+      run: |
+        templ generate
+        go build -v ./...
     - name: Tidy
       run: go mod tidy
-    - name: Build
-      run: go build -v ./...
     - name: Test
       run: go test -v ./...
