@@ -1,9 +1,9 @@
 module github.com/bythecover/backend
 
-go 1.22
+go 1.23.4
 
 require (
-	github.com/a-h/templ v0.2.731
+	github.com/a-h/templ v0.3.819
 	github.com/cloudinary/cloudinary-go/v2 v2.7.0
 	github.com/goloop/env v1.2.0
 	github.com/google/uuid v1.6.0
@@ -24,5 +24,5 @@ require (
 
 require (
 	github.com/coreos/go-oidc/v3 v3.10.0
-	golang.org/x/sync v0.6.0 // indirect
+	golang.org/x/sync v0.10.0 // indirect
 )
