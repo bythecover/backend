@@ -39,6 +39,7 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version-file: './go.mod'
+    - name: Run Tests
       run: go test -v ./...
   build:
     runs-on: ubuntu-latest
