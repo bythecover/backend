@@ -48,4 +48,4 @@ jobs:
     - uses: actions/download-artifact@v4
       with:
         name: built-artifact
-    - run: railway up --service=${{ env.SVC_ID }}
+    - run: railway up --service=${{ vars.SVC_ID }}
