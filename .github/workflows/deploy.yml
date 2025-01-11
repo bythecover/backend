@@ -43,7 +43,6 @@ jobs:
     needs: build
     container: ghcr.io/railwayapp/cli:latest
     env:
-      SVC_ID: my-service-id
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     steps:
     - uses: actions/download-artifact@v4
