@@ -41,6 +41,7 @@ jobs:
     - uses: actions/setup-node@v4
       with:
         node-version: 18
+    - run: npm i
     - run: npm run build
   Deploy-to-Railway:
     runs-on: ubuntu-latest
