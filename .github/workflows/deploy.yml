@@ -50,4 +50,6 @@ jobs:
     - uses: actions/download-artifact@v4
       with:
         name: built-artifact
+    - name: Set executable
+      run: chmod +x ./backend
     - run: railway up --service=${{ vars.SVC_ID }}
