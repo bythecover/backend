@@ -45,6 +45,8 @@ jobs:
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     steps:
+    - name: Set executable
+      run: chmod +x ./backend
     - uses: actions/download-artifact@v4
       with:
         name: built-artifact
