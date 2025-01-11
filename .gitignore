@@ -5,3 +5,4 @@ main
 tmp/
 node_modules/
 routers/static/assets/output.css
+./backend
