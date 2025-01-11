@@ -43,9 +43,10 @@ jobs:
     needs: build
     container: ghcr.io/railwayapp/cli:latest
     env:
-      SVC_ID: my-service-id
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     steps:
+    - name: Set executable
+      run: chmod +x ./backend
     - uses: actions/download-artifact@v4
       with:
         name: built-artifact
