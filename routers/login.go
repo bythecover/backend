@@ -41,7 +41,13 @@ func (adapter loginHttpAdapter) loginHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	state, _ := generateRandomState()
+	state, err := generateRandomState()
+
+	if err != nil {
+		logger.Error.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+
 	session.State = state
 	session.Save()
 	http.Redirect(w, r, adapter.authenticator.AuthCodeURL(state), http.StatusTemporaryRedirect)
