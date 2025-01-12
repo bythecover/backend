@@ -35,7 +35,10 @@ func main() {
 	// User Session/Auth
 	sessionStore := sessions.MemoryStore{}
 	sessions.CreateStore(sessionStore)
-	authService, _ := authenticator.New()
+	authService, err := authenticator.New()
+	if err != nil {
+		logger.Error.Fatalln("Failed to create auth service: ", err)
+	}
 
 	// Repos
 	userRepo := persistence.NewUserPostgresRepository(dbConnection)
