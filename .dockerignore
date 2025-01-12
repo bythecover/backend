@@ -1,6 +1,5 @@
 node_modules
 backend
-.env
 tmp
 .git
 .github
