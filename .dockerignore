@@ -1,6 +1,7 @@
 node_modules
 backend
 tmp
+.env
 .git
 .github
 .vscode
