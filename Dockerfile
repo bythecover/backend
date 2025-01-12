@@ -19,7 +19,6 @@ RUN go mod download
 RUN go build
 
 # Copy in only the binary to make a small final image
-FROM alpine
+FROM scratch
 COPY --from=build /user/src/app/backend /bin/backend
-COPY --from=build /user/src/app/.env /bin/.env
 CMD ["/bin/backend"] 
