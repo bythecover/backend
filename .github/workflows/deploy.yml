@@ -1,3 +1,4 @@
+# See the Dockerfile to see build steps
 name: Deploy to Railway
 
 on:
@@ -5,54 +6,10 @@ on:
     branches: [main]
 
 jobs:
-  Generate-Templates:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version-file: './go.mod'
-    - name: Download Templ
-      run: go install github.com/a-h/templ/cmd/templ@latest
-    - name: Build
-      run: |
-        templ generate
-    - uses: actions/upload-artifact@v4
-      id: artifact-upload-step
-      with:
-        name: generated-artifact
-        path: .
-  Build-Binary-and-CSS:
-    runs-on: ubuntu-latest
-    needs: Generate-Templates
-    steps:
-    - uses: actions/download-artifact@v4
-      with:
-        name: generated-artifact
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 18
-    - run: npm i
-    - run: npm run build
-    - name: Build
-      run: |
-        go build
-    - uses: actions/upload-artifact@v4
-      id: artifact-upload-step
-      with:
-        name: built-artifact
-        path: .
   Deploy-to-Railway:
     runs-on: ubuntu-latest
-    needs: Build-Binary-and-CSS
     container: ghcr.io/railwayapp/cli:latest
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     steps:
-    - uses: actions/download-artifact@v4
-      with:
-        name: built-artifact
-    - name: Set executable
-      run: chmod +x ./backend
     - run: railway up --service=${{ vars.SVC_ID }}
