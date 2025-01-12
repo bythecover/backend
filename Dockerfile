@@ -7,8 +7,8 @@ RUN npm run build
 
 # Generate template files
 FROM ghcr.io/a-h/templ:v0.3.819 AS generate
-COPY --chown=65532:65532 . /user/src/app
 WORKDIR /user/src/app
+COPY --chown=65532:65532 --from=source /user/src/app /user/src/app
 RUN ["templ", "generate"]
 
 # Generate templates & build binary
@@ -19,6 +19,6 @@ RUN go mod download
 RUN go build
 
 # Copy in only the binary to make a small final image
-FROM scratch
-COPY --from=build /user/src/app/backend /bin/backend
-CMD ["/bin/backend"] 
+# FROM scratch
+# COPY --from=build /user/src/app/backend /bin/backend
+# CMD ["/bin/backend"] 
