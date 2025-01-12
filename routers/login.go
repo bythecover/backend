@@ -51,7 +51,7 @@ func (adapter loginHttpAdapter) loginHandler(w http.ResponseWriter, r *http.Requ
 	session.State = state
 	session.Save()
 	logger.Info.Println("saving session")
-	http.Redirect(w, r, adapter.authenticator.AuthCodeURL(state), http.StatusTemporaryRedirect)
+	http.Redirect(w, r, "/somewhere/over/the/rainbow", http.StatusTemporaryRedirect)
 }
 
 func generateRandomState() (string, error) {
