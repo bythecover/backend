@@ -5,3 +5,4 @@ tmp
 .git
 .github
 .vscode
+**/*_templ.go
