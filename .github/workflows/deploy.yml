@@ -12,4 +12,5 @@ jobs:
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     steps:
+    - uses: actions/checkout@v4
     - run: railway up --service=${{ vars.SVC_ID }}
