@@ -13,20 +13,13 @@ type userHttpAdapter struct {
 	userRepo persistence.UserRepo
 }
 
-func NewUserHttpAdapter(userRepo persistence.UserRepo, router *http.ServeMux) userHttpAdapter {
-	adapter := userHttpAdapter{
-		userRepo,
-	}
-	adapter.RegisterRoutes(router)
-	return adapter
-}
-
 func decode[V any](r io.Reader, p V) error {
 	d := json.NewDecoder(r)
 	return d.Decode(p)
 }
 
-func (adapter userHttpAdapter) RegisterRoutes(router *http.ServeMux) {
+func RegisterUserRoutes(router *http.ServeMux, userRepo persistence.UserRepo) {
+	adapter := userHttpAdapter{userRepo}
 	router.HandleFunc("POST /user", adapter.createUser)
 }
 

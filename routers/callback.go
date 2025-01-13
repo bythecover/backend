@@ -14,19 +14,10 @@ type callbackHttpAdapter struct {
 	userRepo      persistence.UserRepo
 }
 
-func NewCallbackHttpAdapter(authenticator *authenticator.Authenticator, userRepo persistence.UserRepo, router *http.ServeMux) callbackHttpAdapter {
-	adapter := callbackHttpAdapter{
-		authenticator,
-		userRepo,
-	}
-
-	adapter.RegisterRoutes(router)
-	return adapter
-}
-
 // The callback is the endpoint that the user is redirected to after authenticating with Auth0.
 // Search Auth0 logs for "callback" to see more
-func (adapter callbackHttpAdapter) RegisterRoutes(router *http.ServeMux) {
+func RegisterCallbackRoutes(router *http.ServeMux, authenticator *authenticator.Authenticator, userRepo persistence.UserRepo) {
+	adapter := callbackHttpAdapter{authenticator, userRepo}
 	router.HandleFunc("GET /callback", adapter.handler)
 }
 

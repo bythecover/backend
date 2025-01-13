@@ -14,14 +14,8 @@ type authorHttpAdapter struct {
 	pollRepo model.PollRepo
 }
 
-// Provides endpoints for pages that are specific to authors
-func NewAuthorHttpAdapter(router *http.ServeMux, pollRepo model.PollRepo) authorHttpAdapter {
+func RegisterAuthorRoutes(router *http.ServeMux, pollRepo model.PollRepo) {
 	adapter := authorHttpAdapter{pollRepo}
-	adapter.registerRoutes(router)
-	return adapter
-}
-
-func (adapter *authorHttpAdapter) registerRoutes(router *http.ServeMux) {
 	isAuthorized := IsAuthorizedAsAuthor()
 	router.Handle("GET /a/{authorName}", isAuthorized(http.HandlerFunc(adapter.getAuthorPage)))
 	router.Handle("PUT /a/{authorName}/{bookId}", isAuthorized(http.HandlerFunc(adapter.finalizePoll)))

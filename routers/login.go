@@ -14,15 +14,8 @@ type loginHttpAdapter struct {
 	authenticator *authenticator.Authenticator
 }
 
-func NewLoginHttpAdapter(authenticator *authenticator.Authenticator, router *http.ServeMux) loginHttpAdapter {
-	adapter := loginHttpAdapter{
-		authenticator,
-	}
-	adapter.registerRoutes(router)
-	return adapter
-}
-
-func (adapter loginHttpAdapter) registerRoutes(router *http.ServeMux) {
+func RegisterLoginRoutes(router *http.ServeMux, authenticator *authenticator.Authenticator) {
+	adapter := loginHttpAdapter{authenticator}
 	router.HandleFunc("GET /login", adapter.loginHandler)
 }
 
