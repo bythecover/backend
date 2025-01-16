@@ -1,7 +1,7 @@
 # By The Cover
 *author: Grant S Ralls*
 
-# Stack
+# The Tech Stack
 - Go 1.23
 - Templ
 - HTMX
