@@ -21,18 +21,8 @@ type pollHttpAdapter struct {
 	cloudinary *cloudinary.Cloudinary
 }
 
-// Provides endpoints specific to polls
-func NewPollHttpAdapter(pollRepo model.PollRepo, voteRepo model.VoteRepo, cloudinary *cloudinary.Cloudinary, router *http.ServeMux) pollHttpAdapter {
-	adapter := pollHttpAdapter{
-		pollRepo,
-		voteRepo,
-		cloudinary,
-	}
-	adapter.registerRoutes(router)
-	return adapter
-}
-
-func (adapter pollHttpAdapter) registerRoutes(router *http.ServeMux) {
+func RegisterPollRoutes(router *http.ServeMux, pollRepo model.PollRepo, voteRepo model.VoteRepo, cloudinary *cloudinary.Cloudinary) {
+	adapter := pollHttpAdapter{pollRepo, voteRepo, cloudinary}
 
 	isAuthorizedAsAuthorOrUser := CreateAuthorizedHandler([]string{"author", "user"})
 	router.Handle("GET /a/{authorName}/{bookid}", isAuthorizedAsAuthorOrUser(http.HandlerFunc(adapter.getPollPage)))

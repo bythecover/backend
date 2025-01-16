@@ -9,6 +9,7 @@ import (
 	"github.com/bythecover/backend/persistence"
 	"github.com/bythecover/backend/routers"
 	"github.com/bythecover/backend/sessions"
+	"github.com/bythecover/backend/templates/pages"
 	"github.com/cloudinary/cloudinary-go/v2"
 
 	"github.com/goloop/env"
@@ -49,14 +50,17 @@ func main() {
 	sessionHandler := routers.HandlerWithSession(sessionStore)
 	middlewareStack := routers.CreateStack(sessionHandler, routers.AllowCors, routers.Logger)
 
-	// Setting up endpoints
-	routers.NewAuthorHttpAdapter(router, pollRepo)
-	routers.NewLoginHttpAdapter(authService, router)
-	routers.NewCallbackHttpAdapter(authService, userRepo, router)
-	routers.NewPollHttpAdapter(pollRepo, voteRepo, cld, router)
-	routers.NewUserHttpAdapter(userRepo, router)
-	routers.NewStaticHttpAdapter(router)
-	routers.Home(router)
+	// registering routes
+	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		session, _ := sessions.WithSession(r.Context())
+		pages.Home(session).Render(r.Context(), w)
+	})
+	routers.RegisterAuthorRoutes(router, pollRepo)
+	routers.RegisterLoginRoutes(router, authService)
+	routers.RegisterCallbackRoutes(router, authService, userRepo)
+	routers.RegisterPollRoutes(router, pollRepo, voteRepo, cld)
+	routers.RegisterUserRoutes(router, userRepo)
+	routers.RegisterStaticRoutes(router)
 
 	server := http.Server{
 		Handler: middlewareStack(router),

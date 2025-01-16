@@ -60,12 +60,11 @@ func HandlerWithSession(store sessions.SessionStore) Middleware {
 			if err == nil {
 				sessionId := cookie.Value
 				session, err = store.Get(sessionId)
+			}
 
-				if err != nil {
-					session = sessions.New()
-					addNewSessionToCookie(w, session)
-				}
-			} else {
+			// If either the session cookie doesn't exist or the sessionid doesn't exist
+			// in the store, create a new session and add that new session to the cookie
+			if err != nil {
 				session = sessions.New()
 				addNewSessionToCookie(w, session)
 			}

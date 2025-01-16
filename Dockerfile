@@ -21,7 +21,6 @@ RUN apk add --no-cache ca-certificates
 
 # Copy in only the binary to make a small final image
 FROM scratch
-# Copy the CA certificates from the builder image
 COPY --from=build /etc/ssl/certs /etc/ssl/certs
 COPY --from=build /usr/share/ca-certificates /usr/share/ca-certificates
 COPY --from=build /user/src/app/backend /bin/backend
