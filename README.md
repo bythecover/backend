@@ -16,7 +16,7 @@
 - [Go 1.23](https://go.dev/dl/)
 - Optional: [Docker](https://www.docker.com/get-started/)
 
-## Setup Steps *(Run commands in the project root director unless specified otherwise)*
+## Setup Steps *(Run commands in the project root directory unless specified)*
 1. `nvm use` - sets the right node version
 2. `npm i` - installs node dev dependencies (mainly tailwind)
 3. `go mod tidy` - installs and cleans go dependencies
